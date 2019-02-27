@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description"
+          content="Panagea - Premium site template for travel agencies, hotels and restaurant listing.">
+    <meta name="author" content="Ansonika">
+    <title>Travel</title>
+
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="/resources/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="/resources/img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72"
+          href="/resources/img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114"
+          href="/resources/img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144"
+          href="/resources/img/apple-touch-icon-144x144-precomposed.png">
+
+    <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
+
+    <!-- BASE CSS -->
+    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/css/style.css" rel="stylesheet">
+    <link href="/resources/css/radio-style.css" rel="stylesheet">
+    <link href="/resources/css/vendors.css" rel="stylesheet">
+
+    <!-- ALTERNATIVE COLORS CSS -->
+    <link href="index.html#" id="colors" rel="stylesheet">
+
+    <!-- YOUR CUSTOM CSS -->
+    <link href="/resources/css/custom.css" rel="stylesheet">
+
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-11097556-8']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <style>
+        .round {
+            border-radius: 100px; /* Радиус скругления */
+            border: 1px solid white; /* Параметры рамки */
+            box-shadow: 0 0 7px #666; /* Параметры тени */
+            width: 49px;
+            height: 49px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div id="page">
+
+    <header class="header menu_fixed">
+        <div id="preloader">
+            <div data-loader="circle-side"></div>
+        </div>
+        <div id="logo" th:if="${currentUser} ne null" style="margin-top: 4px;">
+            <a href="/user/detail" style="color: #a3de12;;font-size: 20px">
+                <img class="round" th:if="${currentUser.imgUrl} ne null"
+                     th:src="@{/resources/{imgUrl}(imgUrl = ${currentUser.imgUrl})}">
+                <img class="round" th:if="${currentUser.imgUrl} eq null"
+                     src="/resources/default/user.png">
+                <th:block th:text="${currentUser.name} + ' ' + ${currentUser.surname}">name surname</th:block>
+            </a>
+        </div>
+        <ul id="top_menu">
+        </ul>
+        <!-- /top_menu -->
+        <a href="index.html#menu" class="btn_mobile">
+            <div class="hamburger hamburger--spin" id="hamburger">
+                <div class="hamburger-box">
+                    <div class="hamburger-inner"></div>
+                </div>
+            </div>
+        </a>
+        <nav id="menu" class="main-menu">
+            <ul>
+                <li>
+                    <span><a href="/" th:text="#{home}">Home</a></span>
+                </li>
+                <li>
+                    <span><a href="/places" th:text="#{places}">Places</a></span>
+                </li>
+                <li>
+                    <span><a href="/hotels" th:text="#{hotels}">Places</a></span>
+                </li>
+                <li th:if="${currentUser} ne null">
+                    <span th:title="#{booking}">
+                        <a href="/user/booking">
+                            <i class="icon-list"></i>
+                            <span id="bookingCount" style="color: #d9e712;font-size: 12px;" th:text="${bookingCount}">booking count</span>
+                        </a>
+                    </span>
+                </li>
+                <li th:if="${currentUser} ne null">
+                    <span th:title="#{wishList}">
+                        <a href="/user/wish_list">
+                            <i class="icon-heart"></i>
+                            <span id="wishListCount" style="color: #d9e712;font-size: 12px;"
+                                  th:text="${wishListCount}">wishlist count</span>
+                        </a>
+                    </span>
+                </li>
+                <li th:if="${currentUser} ne null">
+                    <span th:title="#{logout}">
+                        <a href="/logout"><i class="icon-login-2"></i></a></span>
+                </li>
+                <li th:if="${currentUser} eq null">
+                    <span th:title="#{login}">
+                        <a href="/login"><i class="icon-logout"></i></a>
+                    </span>
+                </li>
+                <li th:if="${currentUser} eq null">
+                    <span th:title="#{register}">
+                    <a href="/register"><i class="icon-doc"></i></a>
+                    </span>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <!-- /header -->
+
+    <main>
+        <section class="hero_single version_2">
+            <div class="wrapper">
+            </div>
+        </section>
+        <!-- /hero_single -->
+
+        <div class="container-fluid margin_80_0">
+            <div class="main_title_2">
+                <span><em></em></span>
+                <h2 th:text="#{popular} + ' ' + #{places}">Popular places</h2>
+            </div>
+            <div id="reccomended" class="owl-carousel owl-theme">
+                <div class="item" th:each="tourdata : ${popularPlaceList}">
+                    <div class="box_grid">
+                        <figure>
+                            <a th:href="@{/place/detail/{placeId}(placeId = ${tourdata.tourPlace.id})}">
+                                <img th:src="@{/resources/{imgUrl}(imgUrl = ${tourdata.tourPlace.imgUrl})}"
+                                     class="img-fluid" alt=""
+                                     width="800"
+                                     height="533">
+                                <div class="read_more" style="cursor: pointer"
+                                     th:onclick="'window.location = ' + ${tourdata.tourPlace.id}">
+                                    <span th:text="#{read.more}">Read more</span>
+                                </div>
+                            </a>
+                        </figure>
+                        <div class="wrapper">
+                            <h3>
+                                <a th:href="@{/place/detail/{placeId}(placeId = ${tourdata.tourPlace.id})}"
+                                   th:text="${tourdata.tourPlace.name}">place name</a>
+                                <!--<div class="score" style="margin-top: 3px;">
+                                    <div th:if="${currentUser} ne null">
+                                        <a style="cursor: pointer" class="wishListChange"
+                                           th:id="'heart-full-place-' + ${tourdata.tourPlace.id}" th:if="${tourdata.existsWishList}">
+                                            <img src="/resources/icons/heartFull.png" style="width: 16px">
+                                        </a>
+                                        <a style="cursor: pointer;display: none" class="wishListChange"
+                                           th:id="'heart-full-place-' + ${tourdata.tourPlace.id}"  th:unless="${tourdata.existsWishList}">
+                                            <img src="/resources/icons/heartFull.png" style="width: 16px">
+                                        </a>
+                                        <a style="cursor: pointer;display: none" class="wishListChange"
+                                           th:id="'heart-empty-place-' + ${tourdata.tourPlace.id}"  th:if="${tourdata.existsWishList}">
+                                            <img src="/resources/icons/heartEmpty.png" style="width: 16px">
+                                        </a>
+                                        <a style="cursor: pointer" class="wishListChange"
+                                           th:id="'heart-empty-place-' + ${tourdata.tourPlace.id}"  th:unless="${tourdata.existsWishList}">
+                                            <img src="/resources/icons/heartEmpty.png" style="width: 16px">
+                                        </a>
+                                    </div>
+                                </div>-->
+                            </h3>
+                            <p th:if="${#strings.length(tourdata.tourPlace.information)} >= 120"
+                               th:text="${#strings.substring(tourdata.tourPlace.information,120)}"></p>
+                            <p th:unless="${#strings.length(tourdata.tourPlace.information)} >= 120"
+                               th:text="${tourdata.tourPlace.information}"></p>
+                            <div class="rating" th:if="${tourdata.rating} > 0">
+                                <th:block th:each="i : ${#numbers.sequence(1,tourdata.rating)}">
+                                    <i class="icon_star voted"></i>
+                                </th:block>
+                                <th:block th:if="${tourdata.rating} < 5" th:each="i : ${#numbers.sequence(tourdata.rating,4)}">
+                                    <i class="icon_star"></i>
+                                </th:block>
+                            </div>
+                            <div class="rating" th:unless="${tourdata.rating} > 0">
+                                    <i class="icon_star"></i>
+                                    <i class="icon_star"></i>
+                                    <i class="icon_star"></i>
+                                    <i class="icon_star"></i>
+                                    <i class="icon_star"></i>
+                            </div>
+
+                        </div>
+                        <ul>
+                            <li style="font-size: 14px;" th:text="'$ ' + ${tourdata.tourPlace.price}"></li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /carousel -->
+            <div class="container">
+                <p class="btn_home_align">
+                    <a href="/places" class="btn_1 rounded" th:text="#{view.all.places}">View all Places</a></p>
+            </div>
+            <hr class="large">
+        </div>
+        <!-- /container -->
+
+        <div class="container-fluid margin_30_95 pl-lg-5 pr-lg-5">
+            <section class="add_bottom_45">
+                <div class="main_title_3">
+                    <span><em></em></span>
+                    <h2 th:text="#{popular} + ' ' + #{hotels}">Popular Hotels</h2>
+                </div>
+                <div class="row">
+                    <div class="col-xl-3 col-lg-6 col-md-6"
+                         th:each="tourdata : ${popularHotelList}">
+                        <div class="grid_item">
+                            <figure>
+                                <img th:src="@{/resources/{imgUrl}(imgUrl = ${tourdata.tourPlace.imgUrl})}"
+                                     class="img-fluid" alt="">
+                                <div class="info">
+                                    <div style="display:flex;">
+                                        <div class="cat_star" th:if="${tourdata.rating} > 0">
+                                            <th:block th:each="i : ${#numbers.sequence(1,tourdata.rating)}">
+                                                <i class="icon_star"></i>
+                                            </th:block>
+                                            <th:block th:if="${tourdata.rating} < 5" th:each="i : ${#numbers.sequence(tourdata.rating,4)}">
+                                                <i class="icon_star_alt"></i>
+                                            </th:block>
+                                        </div>
+                                        <div class="cat_star" th:if="${tourdata.rating} == 0">
+                                            <i class="icon_star_alt"></i>
+                                            <i class="icon_star_alt"></i>
+                                            <i class="icon_star_alt"></i>
+                                            <i class="icon_star_alt"></i>
+                                            <i class="icon_star_alt"></i>
+                                        </div>
+                                        <div class="score" style="margin-left: 177px;">
+                                            <div th:if="${currentUser} ne null">
+                                                <a style="cursor: pointer" class="wishListChange"
+                                                   th:id="'heart-full-hotel-' + ${tourdata.tourPlace.id}" th:if="${tourdata.existsWishList}">
+                                                    <img src="/resources/icons/heartFull.png" style="width: 16px">
+                                                </a>
+                                                <a style="cursor: pointer;display: none" class="wishListChange"
+                                                   th:id="'heart-full-hotel-' + ${tourdata.tourPlace.id}"  th:unless="${tourdata.existsWishList}">
+                                                    <img src="/resources/icons/heartFull.png" style="width: 16px">
+                                                </a>
+                                                <a style="cursor: pointer;display: none" class="wishListChange"
+                                                   th:id="'heart-empty-hotel-' + ${tourdata.tourPlace.id}"  th:if="${tourdata.existsWishList}">
+                                                    <img src="/resources/icons/heartEmpty.png" style="width: 16px">
+                                                </a>
+                                                <a style="cursor: pointer" class="wishListChange"
+                                                   th:id="'heart-empty-hotel-' + ${tourdata.tourPlace.id}"  th:unless="${tourdata.existsWishList}">
+                                                    <img src="/resources/icons/heartEmpty.png" style="width: 16px">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a th:href="@{/hotel/detail/{hotelId}(hotelId = ${tourdata.tourPlace.id})}">
+                                        <h3 th:text="${tourdata.tourPlace.name}">hotel name</h3>
+                                    </a>
+                                </div>
+                            </figure>
+                        </div>
+                    </div>
+                    <!-- /grid_item -->
+                </div>
+                <!-- /row -->
+                <a href="/hotels"><strong>
+                    <th:block th:text="#{view.all.hotels}">view all hotels</th:block>
+                    <i class="arrow_carrot-right"></i></strong>
+                </a>
+            </section>
+        </div>
+    </main>
+    <!-- /main -->
+
+    <footer>
+        <div class="container margin_60_35">
+            <div class="row">
+                <div class="col-lg-5 col-md-12 p-r-5">
+                    <p><img src="img/logo.png" width="150" height="36" data-retina="true" alt=""></p>
+                    <p>Mea nibh meis philosophia eu. Duis legimus efficiantur ea sea. Id placerat tacimates definitionem
+                        sea, prima quidam vim no. Duo nobis persecuti cu. Nihil facilisi indoctum an vix, ut delectus
+                        expetendis vis.</p>
+                    <div class="follow_us">
+                        <ul>
+                            <li>Follow us</li>
+                            <li><a href="index.html#0"><i class="ti-facebook"></i></a></li>
+                            <li><a href="index.html#0"><i class="ti-twitter-alt"></i></a></li>
+                            <li><a href="index.html#0"><i class="ti-google"></i></a></li>
+                            <li><a href="index.html#0"><i class="ti-pinterest"></i></a></li>
+                            <li><a href="index.html#0"><i class="ti-instagram"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 ml-lg-auto">
+                    <h5>Useful links</h5>
+                    <ul class="links">
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="login.html">Login</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="blog.html">News &amp; Events</a></li>
+                        <li><a href="contacts.html">Contacts</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Contact with Us</h5>
+                    <ul class="contacts">
+                        <li><a href="tel://61280932400"><i class="ti-mobile"></i> + 61 23 8093 3400</a></li>
+                        <li><a href="mailto:info@Panagea.com"><i class="ti-email"></i> info@Panagea.com</a></li>
+                    </ul>
+                    <div id="newsletter">
+                        <h6>Newsletter</h6>
+                        <div id="message-newsletter"></div>
+                        <form method="post" action="http://www.ansonika.com/panagea/assets/newsletter.php"
+                              name="newsletter_form" id="newsletter_form">
+                            <div class="form-group">
+                                <input type="email" name="email_newsletter" id="email_newsletter" class="form-control"
+                                       placeholder="Your email">
+                                <input type="submit" value="Submit" id="submit-newsletter">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/row-->
+            <hr>
+            <div class="row">
+                <div class="col-lg-6">
+                    <ul id="footer-selector">
+                        <li>
+                            <div class="styled-select" id="lang-selector">
+                                <select>
+                                    <option value="English" selected>English</option>
+                                    <option value="French">French</option>
+                                    <option value="Spanish">Spanish</option>
+                                    <option value="Russian">Russian</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="styled-select" id="currency-selector">
+                                <select>
+                                    <option value="US Dollars" selected>US Dollars</option>
+                                    <option value="Euro">Euro</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li><img src="img/cards_all.svg" alt=""></li>
+                    </ul>
+                </div>
+                <div class="col-lg-6">
+                    <ul id="additional_links">
+                        <li><a href="index.html#0">Terms and conditions</a></li>
+                        <li><a href="index.html#0">Privacy</a></li>
+                        <li><span>© 2018 Panagea</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--/footer-->
+</div>
+<!-- page -->
+<div id="toTop"></div>
+<!-- Back to top button -->
+
+<!-- COMMON SCRIPTS -->
+<script src="/resources/js/jquery-2.2.4.min.js"></script>
+<script src="/resources/js/common_scripts.js"></script>
+<script src="/resources/js/main.js"></script>
+<script src="/resources/assets/validate.js"></script>
+
+<!-- DATEPICKER  -->
+<script>
+    $(function () {
+        'use strict';
+        $('input[name="dates"]').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear'
+            }
+        });
+        $('input[name="dates"]').on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('MM-DD-YY') + ' > ' + picker.endDate.format('MM-DD-YY'));
+        });
+        $('input[name="dates"]').on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+        });
+    });
+
+</script>
+
+<!-- INPUT QUANTITY  -->
+<script src="/resources/js/input_qty.js"></script>
+
+<!-- COLOR SWITCHER  -->
+<script src="/resources/js/switcher.js"></script>
+<script th:if="${currentUser} ne null" src="/resources/js/wishList.js"></script>
+
+<div id="style-switcher">
+    <h6>
+        <th:block th:text="#{language} + #{plural}"></th:block>
+        <a href="login.html#"><i class="ti-settings"></i></a></h6>
+    <div>
+        <ul class="colors" id="color1">
+            <li th:unless="${#strings.equals(#locale.language,'arm')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=arm'">
+                <img src="/resources/icons/armenia.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'arm')}"
+                style="cursor: pointer">
+                <img src="/resources/icons/armenia.png">
+            </li>
+            <li th:unless="${#strings.equals(#locale.language,'en')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=en'">
+                <img src="/resources/icons/england.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'en')}"
+                style="cursor: pointer">
+                <img src="/resources/icons/england.png">
+            </li>
+            <li th:unless="${#strings.equals(#locale.language,'ru')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=ru'">
+                <img src="/resources/icons/russia.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'ru')}" style="cursor: pointer">
+                <img src="/resources/icons/russia.png">
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+
+</html>

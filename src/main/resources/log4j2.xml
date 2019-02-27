@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" strict="true">
+    <properties>
+        <property name="logPath" value="D:/web/TravelApp/log"/>
+    </properties>
+    <Appenders>
+        <!--Console appender-->
+        <Appender type="Console" name="consoleAppender">
+            <Layout type="PatternLayout" pattern="%clr{%d{yyyy-MM-dd HH:mm:ss}}{faint} %clr{%level} %clr{}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%c{1}.%M}{cyan} %clr{:}{faint} %m%n%xwEx"/>
+        </Appender>
+        <!--App file appender-->
+        <Appender type="RollingFile" name="fileAppender" fileName="${logPath}/app_logs.txt" filePattern="${logPath}/app_logs_%i.txt">
+            <Layout type="PatternLayout" pattern="%d{yyyy-MM-dd HH:mm:ss} %level --- [%t] %c{1}.%M : %m%n%xwEx"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20Mb" />
+            </Policies>
+        </Appender>
+    </Appenders>
+
+    <Loggers>
+        <!--App logger-->
+        <Logger name="net.travel" level="info" additivity="false">
+            <AppenderRef ref="consoleAppender"/>
+            <!--<AppenderRef ref="fileAppender"/>-->
+        </Logger>
+        <!--Root logger-->
+        <Root level="info">
+            <AppenderRef ref="consoleAppender"/>
+            <!--<AppenderRef ref="fileAppender"/>-->
+        </Root>
+    </Loggers>
+</Configuration>

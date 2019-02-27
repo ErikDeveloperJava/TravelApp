@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description"
+          content="Panagea - Premium site template for travel agencies, hotels and restaurant listing.">
+    <meta name="author" content="Ansonika">
+    <title>Travel</title>
+
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="/resources/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="/resources/img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72"
+          href="/resources/img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114"
+          href="/resources/img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144"
+          href="/resources/img/apple-touch-icon-144x144-precomposed.png">
+
+    <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
+
+    <!-- BASE CSS -->
+    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/css/style.css" rel="stylesheet">
+    <link href="/resources/css/vendors.css" rel="stylesheet">
+
+    <!-- YOUR CUSTOM CSS -->
+    <link href="/resources/css/custom.css" rel="stylesheet">
+    <script src="/resources/js/jquery-2.2.4.min.js"></script>
+
+</head>
+
+<body id="login_bg">
+
+<nav id="menu" class="fake_menu"></nav>
+
+<div id="preloader">
+    <div data-loader="circle-side"></div>
+</div>
+<!-- End Preload -->
+
+<div id="login">
+    <aside>
+        <figure>
+            <a href="/" style="color: #006db6;font-size: 23px;">
+                <img src="/resources/img/logo.png" height="70" data-retina="true" alt=""
+                                      class="logo_sticky">Travel
+            </a>
+        </figure>
+        <div class="alert alert-info in alert-success" th:if="${#request.getParameter('email_success_confirmed')} ne null">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <th:block th:text="#{email.confirmed}">email confirmed</th:block>
+        </div>
+        <div class="alert alert-info in alert-success" th:if="${#request.getParameter('data-error')} ne null">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <th:block th:text="#{email.or.password.error}">email or password error</th:block>
+        </div>
+        <div class="alert alert-info in alert-success" th:if="${#request.getParameter('email-inactive')} ne null">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <th:block th:text="#{email.not.verified}">email not verified</th:block>
+        </div>
+        <script>
+            $(document).ready(function () {
+                var isSubmit = false;
+                $("#loginForm").on("submit",function (event) {
+                    if(!isSubmit){
+                        isSubmit= true;
+                    }
+                    var email = $("#email").val();
+                    var password = $("#password").val();
+                    checkEmail(email,event);
+                    checkPassword(password,event);
+                });
+
+                $("#email").on("input",function (event) {
+                    if(isSubmit){
+                        var email = $("#email").val();
+                        checkEmail(email,event)
+                    }
+                })
+
+                $("#password").on("input",function (event) {
+                    if(isSubmit){
+                        var password = $("#password").val();
+                        checkPassword(password,event)
+                    }
+                })
+            });
+
+            function checkEmail(email,event) {
+                if(email.length < 2){
+                    $("#email").attr("style","border: 1px solid red");
+                    event.preventDefault();
+                }else {
+                    $("#email").attr("style","border: 1px solid #d2d8dd;");
+                }
+            }
+
+            function checkPassword(password,event) {
+                if(password.length < 2){
+                    $("#password").attr("style","border: 1px solid red");
+                    event.preventDefault();
+                }else {
+                    $("#password").attr("style","border: 1px solid #d2d8dd;");
+                }
+            }
+        </script>
+        <form action="/login" method="post" id="loginForm">
+            <div class="form-group">
+                <label th:text="#{email}">Email</label>
+                <input type="text" class="form-control" name="email" id="email">
+                <i class="icon_mail_alt"></i>
+            </div>
+            <div class="form-group">
+                <label th:text="#{password}">Password</label>
+                <input type="password" class="form-control" name="password" id="password">
+                <i class="icon_lock_alt"></i>
+            </div>
+            <div class="clearfix add_bottom_30">
+                <div class="checkboxes float-left">
+                    <label class="container_check"><th:block th:text="#{remember} + #{me}"></th:block>
+                        <input type="checkbox" name="remember-me">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div class="float-right mt-1">
+                    <a id="forgot" href="/forgot_password" th:text="#{forgot.password} + '?'">
+                        forgot password
+                    </a>
+                </div>
+            </div>
+            <button type="submit" class="btn_1 rounded full-width" th:text="#{login}">Login</button>
+            <div class="text-center add_top_10">
+                <th:block th:text="#{not.yet.registered}">not yet registered ?</th:block>
+                <strong>
+                    <a href="/register" th:text="#{register}">Register</a>
+                </strong>
+            </div>
+        </form>
+        <div class="copy">© 2018 Travel</div>
+    </aside>
+</div>
+<!-- /login -->
+
+<!-- COMMON SCRIPTS -->
+<script src="/resources/js/common_scripts.js"></script>
+<script src="/resources/js/main.js"></script>
+<script src="/resources/assets/validate.js"></script>
+
+<!-- COLOR SWITCHER  -->
+<script src="/resources/js/switcher.js"></script>
+<div id="style-switcher">
+    <h6><th:block th:text="#{language} + #{plural}"></th:block> <a href="login.html#"><i class="ti-settings"></i></a></h6>
+    <div>
+        <ul class="colors" id="color1">
+            <li th:unless="${#strings.equals(#locale.language,'arm')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=arm'">
+                <img src="/resources/icons/armenia.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'arm')}"
+                style="cursor: pointer">
+                <img src="/resources/icons/armenia.png">
+            </li>
+            <li th:unless="${#strings.equals(#locale.language,'en')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=en'">
+                <img src="/resources/icons/england.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'en')}"
+                style="cursor: pointer" >
+                <img src="/resources/icons/england.png">
+            </li>
+            <li th:unless="${#strings.equals(#locale.language,'ru')}"
+                    style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=ru'">
+                <img src="/resources/icons/russia.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'ru')}" style="cursor: pointer" >
+                <img src="/resources/icons/russia.png">
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

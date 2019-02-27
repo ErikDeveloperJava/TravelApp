@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description"
+          content="Panagea - Premium site template for travel agencies, hotels and restaurant listing.">
+    <meta name="author" content="Ansonika">
+    <meta id="lang" th:content="${#locale.language}">
+    <title>Travel</title>
+
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="/resources/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="/resources/img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72"
+          href="/resources/img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114"
+          href="/resources/img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144"
+          href="/resources/img/apple-touch-icon-144x144-precomposed.png">
+
+    <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
+
+    <!-- BASE CSS -->
+    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/css/style.css" rel="stylesheet">
+    <link href="/resources/css/vendors.css" rel="stylesheet">
+    <link href="/resources/css/select_style.css" rel="stylesheet">
+
+    <!-- YOUR CUSTOM CSS -->
+    <link href="/resources/css/custom.css" rel="stylesheet">
+    <script src="/resources/js/jquery-2.2.4.min.js"></script>
+    <style>
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body id="register_bg">
+
+<nav id="menu" class="fake_menu"></nav>
+
+<div id="preloader">
+    <div data-loader="circle-side"></div>
+</div>
+<!-- End Preload -->
+
+<div id="login">
+    <aside>
+        <figure>
+            <a href="/" style="color: #006db6;font-size: 23px;">
+                <img src="/resources/img/logo.png" height="70" data-retina="true" alt=""
+                     class="logo_sticky">Travel
+            </a>
+        </figure>
+        <div class="alert alert-info in alert-success" th:if="${#request.getParameter('confirm_email')} ne null">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <th:block th:text="#{please.confirm.email}">confirm your email address</th:block>
+        </div>
+        <form action="/register" method="post" th:object="${userAddForm}" enctype="multipart/form-data">
+            <div class="form-group">
+                <div>
+                    <span th:if="${#fields.hasErrors('name')}" class="error" th:text="#{name.error}">name error</span>
+                </div>
+                <label th:text="#{name}">Name</label>
+                <input class="form-control" style="padding: 14px;" type="text" th:field="*{name}"
+                       th:placeholder="#{name}">
+            </div>
+            <div class="form-group">
+                <div th:if="${#fields.hasErrors('surname')}">
+                    <span class="error" th:text="#{surname.error}">surname error</span>
+                </div>
+                <label th:text="#{surname}">surname</label>
+                <input class="form-control" style="padding: 14px;"
+                       type="text" th:field="*{surname}" th:placeholder="#{surname}">
+            </div>
+            <div class="form-group">
+                <div th:if="${#fields.hasErrors('email')}">
+                    <span class="error" th:text="#{email.length.error}">email error</span>
+                </div>
+                <div th:if="${emailExist} ne null">
+                    <span class="error" th:text="#{email.exists.error}">email exist error</span>
+                </div>
+                <label th:text="#{email}">email</label>
+                <input class="form-control" style="padding: 14px;"
+                       type="text" th:field="*{email}" th:placeholder="#{email}">
+            </div>
+            <div class="form-group">
+                <div th:if="${#fields.hasErrors('password')}">
+                    <span class="error" th:text="#{password.error}">password error</span>
+                </div>
+                <div th:if="${passwordNotMatch} ne null">
+                    <span class="error" th:text="#{password.do.not.match}">password do not match</span>
+                </div>
+                <label th:text="#{password}">password</label>
+                <input class="form-control" style="padding: 14px;"
+                       type="password" th:field="*{password}" th:placeholder="#{password}">
+            </div>
+            <div class="form-group">
+                <div th:if="${#fields.hasErrors('rePassword')}">
+                    <span class="error" th:text="#{password.error}">password error</span>
+                </div>
+                <div th:if="${passwordNotMatch} ne null">
+                    <span class="error" th:text="#{password.do.not.match}">password do not match</span>
+                </div>
+                <label th:text="#{repeat.password}">password</label>
+                <input class="form-control" style="padding: 14px;"
+                       type="password" th:field="*{rePassword}" th:placeholder="#{repeat.password}">
+            </div>
+            <div class="form-group">
+                <div th:if="${#fields.hasErrors('contact.phone')}">
+                    <span class="error" th:text="#{phone.error}">phone error</span>
+                </div>
+                <label th:text="#{phone}">phone</label>
+                <input class="form-control" style="padding: 14px;"
+                       type="text" th:field="*{contact.phone}" th:placeholder="#{phone}">
+            </div>
+            <div class="form-group">
+                <div th:if="${#fields.hasErrors('contact.address')}">
+                    <span class="error" th:text="#{address.error}">address error</span>
+                </div>
+                <label th:text="#{address}">address</label>
+                <input class="form-control" style="padding: 14px;"
+                       type="text" th:field="*{contact.address}" th:placeholder="#{address}">
+            </div>
+            <div include="form-input-select()">
+                <span th:if="${#fields.hasErrors('contact.regionId')}" class="error" id="regionError" th:text="#{please.choose} + ' ' + #{region}">region error</span>
+                <span th:unless="${#fields.hasErrors('contact.regionId')}" style="display: none;"
+                      id="regionError" class="error"
+                      th:text="#{please.choose} + ' ' + #{region}">please choose region</span>
+                <select id="regionSelect" th:field="*{contact.regionId}">
+                    <option value="-1" th:text="#{region}"></option>
+                </select>
+            </div>
+            <div include="form-input-select()" id="cityDiv" style="display:none;">
+                <select id="citySelect" th:field="*{contact.cityId}">
+                </select>
+            </div>
+            <div class="form-group">
+            </div>
+            <script>
+                $(document).ready(function () {
+                    $("#regionSelect").on("change",function () {
+                        var regionId = $(this).val();
+                        $("#citySelect").empty();
+                        if(regionId != -1){
+                            $.ajax({
+                                type: "GET",
+                                url: "/city/by/regionId/" + regionId,
+                                contentType: "application/json",
+                                success: function (cities) {
+                                    $.each(cities,function (i, city) {
+                                        var cityName = getCityOrRegionName(city);
+                                        var option = "<option  value='" + city.id + "'>" + cityName +"</option>";
+                                        $("#citySelect").append(option);
+                                    });
+                                    $("#cityDiv").show();
+                                },
+                                error: function () {
+                                    window.location = "/500";
+                                }
+                            })
+                        }else {
+                            $("#cityDiv").hide();
+                        }
+                    })
+                })
+                $.ajax({
+                    type: 'GET',
+                    url: '/region',
+                    contentType: 'application/json',
+                    async: false,
+                    success: function (regionList) {
+                        $.each(regionList, function (i, region) {
+                            var optionTag = '<option value="' + region.id + '">' + getCityOrRegionName(region) + '</option>';
+                            $("#regionSelect").append(optionTag);
+                        })
+                    },
+                    error: function (e) {
+                        window.location = '/500';
+                    }
+                });
+
+                function getCityOrRegionName(region) {
+                    switch ($('#lang').attr('content')) {
+                        case 'en':
+                            return region.nameEn;
+                            break;
+                        case 'ru':
+                            return region.nameRu;
+                            break;
+                        case 'arm':
+                            return region.nameArm;
+                    }
+                }
+            </script>
+            <div class="form-group">
+                <div th:if="${#fields.hasErrors('image')}">
+                    <span class="error" th:text="#{image.format.error}">image format error</span>
+                </div>
+                <input type="file" id="image" name="image" class="inputfile"/>
+                <label style="font-size: 17px;cursor: pointer;color: #026874" for="image"
+                       th:text="#{please.choose} + ' ' + #{image}">please choose image</label>
+            </div>
+            <!-- write regionId,cityId and image input tags -->
+            <div id="pass-info" class="clearfix"></div>
+            <button type="submit"
+                    class="btn_1 rounded full-width add_top_30" th:text="#{register}">register
+            </button>
+            <div class="text-center add_top_10">
+                <th:block th:text="#{already.registered} + ' ?'">already registered</th:block>
+                <strong>
+                    <a href="/login" th:text="#{login}">Login</a>
+                </strong>
+            </div>
+        </form>
+        <div class="copy">© 2018 Travel</div>
+    </aside>
+</div>
+
+<!-- COMMON SCRIPTS -->
+<script src="/resources/js/common_scripts.js"></script>
+<script src="/resources/js/main.js"></script>
+<script src="/resources/assets/validate.js"></script>
+
+<!-- SPECIFIC SCRIPTS -->
+<script src="/resources/js/pw_strenght.js"></script>
+
+<!-- COLOR SWITCHER  -->
+<script src="/resources/js/switcher.js"></script>
+<div id="style-switcher">
+    <h6>
+        <th:block th:text="#{language} + #{plural}"></th:block>
+        <a href="login.html#"><i class="ti-settings"></i></a></h6>
+    <div>
+        <ul class="colors" id="color1">
+            <li th:unless="${#strings.equals(#locale.language,'arm')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=arm'">
+                <img src="/resources/icons/armenia.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'arm')}"
+                style="cursor: pointer">
+                <img src="/resources/icons/armenia.png">
+            </li>
+            <li th:unless="${#strings.equals(#locale.language,'en')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=en'">
+                <img src="/resources/icons/england.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'en')}"
+                style="cursor: pointer">
+                <img src="/resources/icons/england.png">
+            </li>
+            <li th:unless="${#strings.equals(#locale.language,'ru')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=ru'">
+                <img src="/resources/icons/russia.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'ru')}" style="cursor: pointer">
+                <img src="/resources/icons/russia.png">
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

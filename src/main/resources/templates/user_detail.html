@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description"
+          content="Panagea - Premium site template for travel agencies, hotels and restaurant listing.">
+    <meta name="author" content="Ansonika">
+    <title th:text="${currentUser.name} + ' ' + ${currentUser.surname}"></title>
+    <meta id="lang" th:content="${#locale.language}">
+    <meta id="regionId" th:content="${currentUser.contact.region.id}">
+    <meta id="cityId" th:content="${currentUser.contact.city.id}">
+
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="/resources/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="/resources/img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72"
+          href="/resources/img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114"
+          href="/resources/img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144"
+          href="/resources/img/apple-touch-icon-144x144-precomposed.png">
+
+    <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- BASE CSS -->
+    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/css/style.css" rel="stylesheet">
+    <link href="/resources/css/vendors.css" rel="stylesheet">
+    <!-- YOUR CUSTOM CSS -->
+    <link href="/resources/css/custom.css" rel="stylesheet">
+    <link href="/resources/css/select_style.css" rel="stylesheet">
+    <script src="/resources/js/jquery-2.2.4.min.js"></script>
+    <style>
+        .round {
+            border-radius: 100px; /* Радиус скругления */
+            border: 1px solid white; /* Параметры рамки */
+            box-shadow: 0 0 7px #666; /* Параметры тени */
+            width: 49px;
+            height: 49px;
+        }
+        .loader{
+            width: 89px;
+            height: 63px;
+            position: absolute;
+            background: white;
+            margin-left: 489px;
+            margin-top: 581px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div id="page" class="theia-exception">
+
+    <header class="header menu_fixed">
+        <div id="preloader">
+            <div data-loader="circle-side"></div>
+        </div>
+        <div id="logo" th:if="${currentUser} ne null" style="margin-top: 4px;">
+            <a href="/user/detail" style="color: #a3de12;;font-size: 20px">
+                <img class="round" id="user-main-image" th:if="${currentUser.imgUrl} ne null"
+                     th:src="@{/resources/{imgUrl}(imgUrl = ${currentUser.imgUrl})}">
+                <img class="round" id="user-main-image" th:if="${currentUser.imgUrl} eq null"
+                     src="/resources/default/user.png">
+                <th:block th:text="${currentUser.name} + ' ' + ${currentUser.surname}">name surname</th:block>
+            </a>
+        </div>
+        <ul id="top_menu">
+        </ul>
+        <!-- /top_menu -->
+        <a href="index.html#menu" class="btn_mobile">
+            <div class="hamburger hamburger--spin" id="hamburger">
+                <div class="hamburger-box">
+                    <div class="hamburger-inner"></div>
+                </div>
+            </div>
+        </a>
+        <nav id="menu" class="main-menu">
+            <ul>
+                <li>
+                    <span><a href="/" th:text="#{home}">Home</a></span>
+                </li>
+                <li>
+                    <span><a href="/places" th:text="#{places}">Places</a></span>
+                </li>
+                <li>
+                    <span><a href="/hotels" th:text="#{hotels}">Places</a></span>
+                </li>
+                <li th:if="${currentUser} ne null">
+                    <span th:title="#{booking}">
+                        <a href="/user/booking">
+                            <i class="icon-list"></i>
+                            <span id="bookingCount" style="color: #d9e712;font-size: 12px;" th:text="${bookingCount}">booking count</span>
+                        </a>
+                    </span>
+                </li>
+                <li th:if="${currentUser} ne null">
+                    <span th:title="#{wishList}">
+                        <a href="/user/wish_list">
+                            <i class="icon-heart"></i>
+                            <span id="wishListCount" style="color: #d9e712;font-size: 12px;"
+                                  th:text="${wishListCount}">wishlist count</span>
+                        </a>
+                    </span>
+                </li>
+                <li th:if="${currentUser} ne null">
+                    <span th:title="#{logout}">
+                        <a href="/logout"><i class="icon-login-2"></i></a></span>
+                </li>
+                <li th:if="${currentUser} eq null">
+                    <span th:title="#{login}">
+                        <a href="/login"><i class="icon-logout"></i></a>
+                    </span>
+                </li>
+                <li th:if="${currentUser} eq null">
+                    <span th:title="#{register}">
+                    <a href="/register"><i class="icon-doc"></i></a>
+                    </span>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <!-- /header -->
+
+    <main>
+        <section class="hero_single version_2">
+            <div class="wrapper">
+            </div>
+        </section>
+        <!--/hero_in-->
+        <div class="bg_color_1">
+            <div class="container margin_60_35">
+                <div class="row">
+                    <div>
+                    </div>
+                    <aside class="col-lg-4" id="sidebar">
+                        <div class="box_detail booking" style="width: 821px;margin-left: 120px;">
+                            <div class="price">
+                                <i style="cursor: pointer;margin-left: 37px;" id="delete-image" class="icon-cancel"></i>
+                                <script>
+                                    $(document).ready(function () {
+                                        var isDeleteClick = false;
+                                        var isChangeImageClick = false;
+                                        $("#delete-image").on("click",function () {
+                                            var src = $("#user-image").attr("src");
+                                            if(src != '/resources/default/user.png' && !isDeleteClick){
+                                                isDeleteClick = true;
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "/user/image/delete",
+                                                    contentType: "application/json",
+                                                    success: function () {
+                                                        $("#user-image").attr("src",'/resources/default/user.png');
+                                                        $("#user-main-image").attr("src",'/resources/default/user.png');
+                                                        $("#imageFormatError").hide();
+                                                        isDeleteClick = false;
+                                                    },
+                                                    error: function () {
+                                                        window.location = "/500";
+                                                    }
+                                                })
+                                            }
+                                        });
+
+
+                                        $("#image").on("change",function () {
+                                            var image = $("#image").val();
+                                            if(image.length >= 4 && !isChangeImageClick){
+                                                isChangeImageClick = true;
+                                                var formData = new FormData($("#imageForm")[0]);
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "/user/image/change",
+                                                    cache: false,
+                                                    contentType: false,
+                                                    processData: false,
+                                                    data: formData,
+                                                    success: function (imageDto) {
+                                                        if(imageDto.imageFormatError){
+                                                            $("#imageFormatError").show();
+                                                        }else {
+                                                            $("#user-image").attr("src","/resources/" + imageDto.imgUrl)
+                                                            $("#user-main-image").attr("src","/resources/" + imageDto.imgUrl)
+                                                            $("#imageFormatError").hide();
+                                                        }
+                                                        isChangeImageClick = false;
+                                                    },
+                                                    error: function () {
+                                                        window.location = "/500";
+                                                    }
+                                                })
+                                            }
+                                        })
+                                        $("#imageFormatClose").on("click",function () {
+                                            $("#imageFormatError").hide();
+                                        })
+                                    })
+                                </script>
+                                <div>
+                                    <img class="round" id="user-image" th:if="${currentUser.imgUrl} eq null" src="/resources/default/user.png">
+                                    <img class="round" id="user-image" th:if="${currentUser.imgUrl} ne null"
+                                         th:src="@{/resources/{imgUrl}(imgUrl = ${currentUser.imgUrl})}">
+                                    <th:block th:text="${currentUser.name} + ' ' + ${currentUser.surname}"></th:block>
+                                </div>
+                                <div class="score" style="margin-top: -32px;">
+                                    <div class="alert alert-info in alert-danger"
+                                         style="display: none;margin-top: -49px;margin-left: -42px;" id="imageFormatError">
+                                        <a  id="imageFormatClose" style="margin-left: 13px;cursor:pointer;margin-top: -4px;"
+                                           class="close" title="close">×</a>
+                                        <th:block th:text="#{image.format.error}">email confirmed</th:block>
+                                    </div>
+                                    <form id="imageForm" enctype="multipart/form-data" method="post">
+                                        <input type="file" id="image" name="image" class="inputfile"/>
+                                        <label style="font-size: 17px;cursor: pointer;color: #026874" for="image"
+                                               th:text="#{change} + ' ' + #{image}">change image</label>
+                                    </form>
+                                </div>
+                            </div>
+                            <form id="userChangeForm">
+                                <div class="form-group">
+                                    <div style="display: none;" id="nameError">
+                                        <span style="color: red" th:text="#{name.error}">name error</span>
+                                    </div>
+                                    <input class="form-control"
+                                           type="text" id="name" name="name" th:placeholder="#{name}" th:value="${currentUser.name}">
+                                </div>
+                                <div class="form-group">
+                                    <div style="display: none;" id="surnameError">
+                                        <span style="color: red" th:text="#{surname.error}">surname error</span>
+                                    </div>
+                                    <input class="form-control"
+                                           type="text" id="surname" name="surname" th:placeholder="#{surname}" th:value="${currentUser.surname}">
+                                </div>
+                                <div class="form-group">
+                                    <div style="display: none;" id="emailError">
+                                        <span style="color: red" th:text="#{email.length.error}">email length error</span>
+                                    </div>
+                                    <div style="display: none;" id="emailExistError">
+                                        <span style="color: red" th:text="#{email.exists.error}">email exist error</span>
+                                    </div>
+                                    <input class="form-control"
+                                           type="text" id="email" name="email" th:placeholder="#{email}" th:value="${currentUser.email}">
+                                </div>
+
+                                <div class="form-group">
+                                    <div style="display: none;" id="passwordError">
+                                        <span style="color: red" th:text="#{password.error}">password error</span>
+                                    </div>
+                                    <div style="display: none;" class="passwordsNotMatchError">
+                                        <span style="color: red" th:text="#{password.do.not.match}">password do not match</span>
+                                    </div>
+                                    <input class="form-control"
+                                           type="password" id="password" name="password"
+                                           th:placeholder="#{password}">
+                                </div>
+                                <div class="form-group">
+                                    <div style="display: none;" id="rePasswordError">
+                                        <span style="color: red" th:text="#{repeat.password}">repeat password</span>
+                                    </div>
+                                    <div style="display: none;" class="passwordsNotMatchError">
+                                        <span style="color: red" th:text="#{password.do.not.match}">password do not match</span>
+                                    </div>
+                                    <input class="form-control"
+                                           type="password" id="rePassword" name="rePassword"
+                                           th:placeholder="#{repeat.password}">
+                                </div>
+                                <div include="form-input-select()">
+                                    <span style="display: none;color: red"
+                                          id="regionError" th:text="#{please.choose} + ' ' + #{region}">please choose region</span>
+                                    <select id="regionSelect" name="region">
+                                        <option value="-1" th:text="#{region}"></option>
+                                    </select>
+                                </div>
+                                <div include="form-input-select()" id="cityDiv">
+                                    <select id="citySelect" name="city">
+                                    </select>
+                                </div>
+                                <script>
+                                    $(document).ready(function () {
+                                        $("#regionSelect").on("change",function () {
+                                            var regionId = $(this).val();
+                                            $("#citySelect").empty();
+                                            if(regionId != -1){
+                                                loadCitiesByRegionId(regionId,false);
+                                            }else {
+                                                $("#citySelect").hide();
+                                            }
+                                        })
+                                    });
+                                    $.ajax({
+                                        type: 'GET',
+                                        url: '/region',
+                                        contentType: 'application/json',
+                                        async: false,
+                                        success: function (regionList) {
+                                            var actualRegionId = $("#regionId").attr("content");
+                                            $.each(regionList, function (i, region) {
+                                                var optionTag
+                                                if(actualRegionId == region.id){
+                                                    optionTag = '<option value="' + region.id + '" selected>' + getCityOrRegionName(region) + '</option>';
+                                                    loadCitiesByRegionId(actualRegionId,false)
+                                                }else {
+                                                    optionTag = '<option value="' + region.id + '">' + getCityOrRegionName(region) + '</option>';
+                                                }
+                                                $("#regionSelect").append(optionTag);
+                                                $("#regionSelect").show();
+                                            })
+                                        },
+                                        error: function (e) {
+                                            window.location = '/500';
+                                        }
+                                    });
+
+                                    function loadCitiesByRegionId(regionId,async) {
+                                        $.ajax({
+                                            type: "GET",
+                                            url: "/city/by/regionId/" + regionId,
+                                            contentType: "application/json",
+                                            async: async,
+                                            success: function (cities) {
+                                                var actualCityId = $("#cityId").attr("content")
+                                                $.each(cities,function (i, city) {
+                                                    var cityName = getCityOrRegionName(city);
+                                                    var option;
+                                                    if(actualCityId == city.id){
+                                                        option = "<option  value='" + city.id + "' selected>" + cityName +"</option>";
+                                                    }else {
+                                                        option = "<option  value='" + city.id + "'>" + cityName +"</option>";
+                                                    }
+                                                    $("#citySelect").append(option);
+                                                });
+                                                $("#citySelect").show();
+                                            },
+                                            error: function () {
+                                                window.location = "/500";
+                                            }
+                                        })
+                                    }
+
+                                    function getCityOrRegionName(region) {
+                                        switch ($('#lang').attr('content')) {
+                                            case 'en':
+                                                return region.nameEn;
+                                                break;
+                                            case 'ru':
+                                                return region.nameRu;
+                                                break;
+                                            case 'arm':
+                                                return region.nameArm;
+                                        }
+                                    }
+                                </script>
+                                <div class="form-group">
+                                    <div style="display: none;" id="addressError">
+                                        <span style="color: red" th:text="#{address.error}">address error</span>
+                                    </div>
+                                    <input class="form-control"
+                                           type="text" id="address" name="address"
+                                           th:placeholder="#{address}" th:value="${currentUser.contact.address}">
+                                </div>
+                                <button type="submit"
+                                        class="add_top_30 btn_1 full-width purchase" th:text="#{send}"></button>
+                            </form>
+                        </div>
+                    </aside>
+                </div>
+                <!-- /row -->
+            </div>
+            <!-- /container -->
+        </div>
+        <!-- /bg_color_1 -->
+    </main>
+    <!--/main-->
+    <footer>
+        <div class="container margin_60_35">
+            <div class="row">
+                <div class="col-lg-5 col-md-12 p-r-5">
+                    <p><img src="img/logo.png" width="150" height="36" data-retina="true" alt=""></p>
+                    <p>Mea nibh meis philosophia eu. Duis legimus efficiantur ea sea. Id placerat tacimates definitionem
+                        sea, prima quidam vim no. Duo nobis persecuti cu. Nihil facilisi indoctum an vix, ut delectus
+                        expetendis vis.</p>
+                    <div class="follow_us">
+                        <ul>
+                            <li>Follow us</li>
+                            <li><a href="index.html#0"><i class="ti-facebook"></i></a></li>
+                            <li><a href="index.html#0"><i class="ti-twitter-alt"></i></a></li>
+                            <li><a href="index.html#0"><i class="ti-google"></i></a></li>
+                            <li><a href="index.html#0"><i class="ti-pinterest"></i></a></li>
+                            <li><a href="index.html#0"><i class="ti-instagram"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 ml-lg-auto">
+                    <h5>Useful links</h5>
+                    <ul class="links">
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="login.html">Login</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="blog.html">News &amp; Events</a></li>
+                        <li><a href="contacts.html">Contacts</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Contact with Us</h5>
+                    <ul class="contacts">
+                        <li><a href="tel://61280932400"><i class="ti-mobile"></i> + 61 23 8093 3400</a></li>
+                        <li><a href="mailto:info@Panagea.com"><i class="ti-email"></i> info@Panagea.com</a></li>
+                    </ul>
+                    <div id="newsletter">
+                        <h6>Newsletter</h6>
+                        <div id="message-newsletter"></div>
+                        <form method="post" action="http://www.ansonika.com/panagea/assets/newsletter.php"
+                              name="newsletter_form" id="newsletter_form">
+                            <div class="form-group">
+                                <input type="email" name="email_newsletter" id="email_newsletter" class="form-control"
+                                       placeholder="Your email">
+                                <input type="submit" value="Submit" id="submit-newsletter">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/row-->
+            <hr>
+            <div class="row">
+                <div class="col-lg-6">
+                    <ul id="footer-selector">
+                        <li>
+                            <div class="styled-select" id="lang-selector">
+                                <select>
+                                    <option value="English" selected>English</option>
+                                    <option value="French">French</option>
+                                    <option value="Spanish">Spanish</option>
+                                    <option value="Russian">Russian</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="styled-select" id="currency-selector">
+                                <select>
+                                    <option value="US Dollars" selected>US Dollars</option>
+                                    <option value="Euro">Euro</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li><img src="img/cards_all.svg" alt=""></li>
+                    </ul>
+                </div>
+                <div class="col-lg-6">
+                    <ul id="additional_links">
+                        <li><a href="index.html#0">Terms and conditions</a></li>
+                        <li><a href="index.html#0">Privacy</a></li>
+                        <li><span>© 2018 Panagea</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<div id="toTop"></div><!-- Back to top button -->
+
+<!-- COMMON SCRIPTS -->
+<script src="/resources/js/common_scripts.js"></script>
+<script src="/resources/js/main.js"></script>
+<script src="/resources/assets/validate.js"></script>
+
+<!-- Map -->
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyB6Vck_vRXDPR8ILH8ZLOeGSEz_n4YR0mU"></script>
+<script src="/resources/js/map_single_hotel.js"></script>
+<script src="/resources/js/infobox.js"></script>
+
+<!-- DATEPICKER  -->
+<script>
+    $(function () {
+        $('input[name="dates"]').daterangepicker({
+            autoUpdateInput: false,
+            opens: 'left',
+            locale: {
+                cancelLabel: 'Clear'
+            }
+        });
+        $('input[name="dates"]').on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('MM-DD-YY') + ' > ' + picker.endDate.format('MM-DD-YY'));
+        });
+        $('input[name="dates"]').on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+        });
+    });
+</script>
+
+<!-- INPUT QUANTITY  -->
+<script src="js/input_qty.js"></script>
+
+<!-- INSTAGRAM FEED  -->
+<script>
+    $(window).on('load', function () {
+        "use strict";
+        $.instagramFeed({
+            'username': 'hotelwailea',
+            'container': "#instagram-feed-hotel",
+            'display_profile': false,
+            'display_biography': false,
+            'display_gallery': true,
+            'get_raw_json': false,
+            'callback': null,
+            'styling': true,
+            'items': 12,
+            'items_per_row': 6,
+            'margin': 1
+        });
+    });
+</script>
+
+<!-- COLOR SWITCHER  -->
+<script src="/resources/js/switcher.js"></script>
+<script src="/resources/js/user_detail.js"></script>
+<div id="style-switcher">
+    <h6>
+        <th:block th:text="#{language} + #{plural}"></th:block>
+        <a href="login.html#"><i class="ti-settings"></i></a></h6>
+    <div>
+        <ul class="colors" id="color1">
+            <li th:unless="${#strings.equals(#locale.language,'arm')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=arm'">
+                <img src="/resources/icons/armenia.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'arm')}"
+                style="cursor: pointer">
+                <img src="/resources/icons/armenia.png">
+            </li>
+            <li th:unless="${#strings.equals(#locale.language,'en')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=en'">
+                <img src="/resources/icons/england.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'en')}"
+                style="cursor: pointer">
+                <img src="/resources/icons/england.png">
+            </li>
+            <li th:unless="${#strings.equals(#locale.language,'ru')}"
+                style="cursor: pointer" onclick="window.location = document.URL.split('?')[0] + '?lang=ru'">
+                <img src="/resources/icons/russia.png">
+            </li>
+            <li th:if="${#strings.equals(#locale.language,'ru')}" style="cursor: pointer">
+                <img src="/resources/icons/russia.png">
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+</body>
+</html>
