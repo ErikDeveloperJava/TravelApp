@@ -13,6 +13,7 @@ import net.travel.repository.WishListRepository;
 import net.travel.service.HotelService;
 import net.travel.util.NumberUtil;
 import net.travel.util.PaginationUtil;
+import net.travel.util.model.RatingPercent;
 import net.travel.util.model.TourData;
 import net.travel.util.model.TourDetailData;
 import net.travel.util.search.SearchParam;
@@ -116,6 +117,21 @@ public class HotelServiceImpl implements HotelService {
         int ratingCount = reviewRepository.countByHotelId(id);
         boolean existsWishList = userId != -1 && wishListRepository
                 .existsByUser_idAndHotel_id(userId,hotel.getId());
+        List<RatingPercent> ratingPercentList = new ArrayList<>();
+        for (int i = 5; i > 0; i--) {
+            Integer ratingNumberSum = reviewRepository.findSumHotelRatingByRatingNumber(i, hotel.getId());
+            int percent;
+            if(ratingNumberSum == null){
+                percent = 0;
+            }else{
+                percent = numberUtil.countPercent(ratingNumberSum,ratingSum);
+            }
+            ratingPercentList.add(RatingPercent
+                    .builder()
+                    .percent(percent)
+                    .ratingNumber(i)
+                    .build());
+        }
         return TourDetailData.<Hotel, HotelImage>
                 builder()
                 .model(hotel)
@@ -123,6 +139,7 @@ public class HotelServiceImpl implements HotelService {
                 .reviewList(reviewList)
                 .rating(numberUtil.countRating(ratingSum,ratingCount))
                 .existsWishList(existsWishList)
+                .ratingPercentList(ratingPercentList)
                 .build();
     }
 

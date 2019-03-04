@@ -25,7 +25,7 @@ public class Hotel {
     @ManyToOne
     private Place place;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
     private Contact contact;
 
     @OneToMany(mappedBy = "hotel")

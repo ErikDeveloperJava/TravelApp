@@ -23,4 +23,6 @@ public class TourDetailData<M,IMG> {
     private boolean existsWishList;
 
     private int rating;
+
+    private List<RatingPercent> ratingPercentList;
 }
