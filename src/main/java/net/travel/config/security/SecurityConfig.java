@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin","/admin/**")
                 .hasAuthority(UserType.ADMIN.name())
                 .antMatchers("/user/wish_list","/user/wish_list/*","/user/detail",
-                        "/user/image/delete","/user/image/change")
+                        "/user/image/delete","/user/image/change","/hotel/review")
                 .hasAuthority(UserType.USER.name())
         .and()
                 .formLogin()

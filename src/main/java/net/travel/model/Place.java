@@ -9,6 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString(exclude = "reviewList")
 public class Place {
 
     @Id

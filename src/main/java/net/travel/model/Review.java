@@ -1,9 +1,6 @@
 package net.travel.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Time;
@@ -14,6 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Entity
+@EqualsAndHashCode(exclude = {"sendDate","user","place","hotel"})
 public class Review {
 
     @Id
