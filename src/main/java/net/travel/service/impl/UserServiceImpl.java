@@ -1,6 +1,7 @@
 package net.travel.service.impl;
 
 import net.travel.config.security.CurrentUser;
+import net.travel.dto.UserDto;
 import net.travel.model.User;
 import net.travel.repository.UserRepository;
 import net.travel.service.UserService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 @Service
@@ -88,5 +90,20 @@ public class UserServiceImpl implements UserService {
             throw e;
         }
         return imageName;
+    }
+
+    public static UserDto userDtoBuilder(User user){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+        return UserDto
+                .builder()
+                .contact(user.getContact())
+                .email(user.getEmail())
+                .id(user.getId())
+                .imgUrl(user.getImgUrl())
+                .name(user.getName())
+                .registerDate(dateFormat.format(user.getRegisterDate()))
+                .surname(user.getSurname())
+                .userType(user.getUserType())
+                .build();
     }
 }

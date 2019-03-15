@@ -2,13 +2,14 @@ package net.travel.controller;
 
 import net.travel.config.security.CurrentUser;
 import net.travel.dto.HotelDto;
+import net.travel.dto.ReviewAddDto;
 import net.travel.dto.SearchDto;
+import net.travel.form.ReviewForm;
 import net.travel.model.Hotel;
 import net.travel.model.HotelImage;
-import net.travel.service.HotelService;
-import net.travel.service.UserOrderService;
-import net.travel.service.UserService;
-import net.travel.service.WishListService;
+import net.travel.model.Review;
+import net.travel.repository.ReviewRepository;
+import net.travel.service.*;
 import net.travel.util.NumberUtil;
 import net.travel.util.TemplateUtil;
 import net.travel.util.model.TourDetailData;
@@ -22,11 +23,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -48,6 +49,9 @@ public class HotelController {
 
     @Autowired
     private NumberUtil numberUtil;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping("/hotels")
     public String hotelsTemplate(@AuthenticationPrincipal CurrentUser currentUser,
@@ -107,5 +111,32 @@ public class HotelController {
                 .getDetailById(hotelId, isUserExist ? currentUser.getUser().getId() : -1);
         model.addAttribute("tourDetail",hotelDetail);
         return TemplateUtil.HOTEL_DETAIL;
+    }
+
+    @PostMapping("/hotel/review")
+    public @ResponseBody ResponseEntity addReview(@AuthenticationPrincipal CurrentUser currentUser,
+                                                  @RequestBody @Valid ReviewForm reviewForm, BindingResult result){
+        if(result.hasErrors()){
+            return ResponseEntity
+                    .ok(ReviewAddDto
+                            .builder()
+                            .messageError(true)
+                            .build());
+        }
+        Review review = Review
+                .builder()
+                .sendDate(new Date())
+                .rating(reviewForm.getRating())
+                .hotel(Hotel
+                        .builder()
+                        .id(reviewForm.getHotelId())
+                        .build())
+                .user(currentUser.getUser())
+                .message(reviewForm.getMessage())
+                .build();
+        LOGGER.info("{} saved successfully",review);
+        ReviewAddDto reviewAddDto = reviewService.add(review);
+        return ResponseEntity
+                .ok(reviewAddDto);
     }
 }
