@@ -10,6 +10,7 @@ import java.util.Date;
 @Builder
 @Entity
 @Table(name = "user_order")
+@ToString(exclude = {"hotel","orderDate"})
 public class UserOrder {
 
     @Id
@@ -35,4 +36,7 @@ public class UserOrder {
 
     @ManyToOne
     private User user;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date orderDate;
 }
