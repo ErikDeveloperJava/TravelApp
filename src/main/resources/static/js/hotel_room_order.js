@@ -135,4 +135,6 @@ function setEmptyValuesOrderForm() {
     $("#daysCount").val("0");
     $("#adultCount").val("0");
     $("#childrenCount").val("0");
+    var orderPriceStrArray = $("#orderPrice").text().split(" ");
+    $("#orderPrice").text(orderPriceStrArray[0] + " 0 " + " $");
 }
