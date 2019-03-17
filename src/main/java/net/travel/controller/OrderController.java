@@ -56,7 +56,7 @@ public class OrderController {
             errorList.add("childrenCount");
         }else if(!hotelService.existsById(orderForm.getHotelId())){
             errorList.add("hotelId");
-        }else if(!(optionalHotelRoom = hotelRoomService.getById(orderForm.getHotelRoomId())).isPresent()){
+        }else if(!(optionalHotelRoom = hotelRoomService.getById(orderForm.getHotelRoomId(),false)).isPresent()){
             errorList.add("hotelRoomId");
         }else {
             HotelRoom hotelRoom = optionalHotelRoom.get();

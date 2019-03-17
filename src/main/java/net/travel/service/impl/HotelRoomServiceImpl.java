@@ -6,6 +6,7 @@ import net.travel.repository.HotelRoomRepository;
 import net.travel.service.HotelRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -15,9 +16,13 @@ public class HotelRoomServiceImpl implements HotelRoomService {
     @Autowired
     private HotelRoomRepository hotelRoomRepository;
 
-    @Override
-    public Optional<HotelRoom> getById(int hotelRoomId) {
-        return hotelRoomRepository.findById(hotelRoomId);
+    @Transactional
+    public Optional<HotelRoom> getById(int hotelRoomId,boolean isLoadImageList) {
+        Optional<HotelRoom> hotelRoomOptional = hotelRoomRepository.findById(hotelRoomId);
+        if(hotelRoomOptional.isPresent() && isLoadImageList){
+            hotelRoomOptional.get().getImageList();
+        }
+        return hotelRoomOptional;
     }
 
     @Override

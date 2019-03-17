@@ -1,12 +1,10 @@
 package net.travel.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.travel.dto.HotelRoomDto;
-import net.travel.model.Hotel;
 import net.travel.model.HotelRoom;
 import net.travel.service.HotelRoomService;
-import net.travel.service.impl.HotelRoomServiceImpl;
-import net.travel.service.impl.ReviewServiceImpAddTest;
+import net.travel.service.UserOrderService;
+import net.travel.service.UserService;
+import net.travel.service.WishListService;
 import net.travel.util.NumberUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,22 +18,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.thymeleaf.spring5.expression.Mvc;
 
 import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.mock.web.MockRequestDispatcher.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = HotelRoomController.class)
-@ContextConfiguration(classes = HotelRoomControllerGetByIdTest.TestConfig.class)
-public class HotelRoomControllerGetByIdTest {
+@ContextConfiguration(classes = HotelRoomControllerRoomDetailTest.Config.class)
+public class HotelRoomControllerRoomDetailTest {
 
-    private static final String URL = "/hotel/room/id/";
+    private static final String URI = "/hotel/room/detail/";
 
     @Autowired
     private MockMvc mvc;
@@ -50,48 +48,56 @@ public class HotelRoomControllerGetByIdTest {
     @Autowired
     private NumberUtil numberUtil;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @MockBean
+    private UserService userService;
+
+    @MockBean
+    private UserOrderService userOrderService;
+
+    @MockBean
+    private WishListService wishListService;
 
     @TestConfiguration
-    static class TestConfig {
+    static class Config{
         @Bean
-        public NumberUtil numberUtil() {
+        public NumberUtil numberUtil(){
             return new NumberUtil();
         }
     }
 
     @Test
-    public void testStrId() throws Exception {
-        mvc.perform(get(URL + "abc"))
+    public void testStrId()throws Exception{
+        mvc.perform(get(URI + "abc"))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
     }
 
     @Test
-    public void testWrongHotelRoomId() throws Exception {
-        int hotelRoomId = 10;
-        when(hotelRoomService.getById(hotelRoomId,false)).thenReturn(Optional.empty());
-        mvc.perform(get(URL + hotelRoomId))
+    public void testNotExistsId()throws Exception{
+        int id = 2;
+        when(hotelRoomService.existsById(id))
+                .thenReturn(false);
+        mvc.perform(get(URI + id))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
     }
 
     @Test
-    public void testNormalHotelRoomId() throws Exception {
-        int hotelRoomId = 1;
+    public void testOkParameter()throws Exception{
+        int id = 2;
+        when(hotelRoomService.existsById(id))
+                .thenReturn(true);
         HotelRoom hotelRoom = HotelRoom
                 .builder()
-                .id(1)
-                .hotel(Hotel
-                        .builder()
-                        .build())
+                .id(id)
                 .build();
-        HotelRoomDto expectedHotelRoom = HotelRoomServiceImpl.buildHotelRoomDto(hotelRoom);
-        when(hotelRoomService.getById(hotelRoomId,false)).thenReturn(Optional.of(hotelRoom));
-        mvc.perform(get(URL + hotelRoomId))
+        when(hotelRoomService.getById(id,true))
+                .thenReturn(Optional.of(hotelRoom));
+        mvc.perform(get(URI + id))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(expectedHotelRoom)));
+                .andExpect(model().attribute("hotelRoom",hotelRoom));
     }
 }

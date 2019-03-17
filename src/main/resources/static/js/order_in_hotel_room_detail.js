@@ -11,14 +11,15 @@ $(document).ready(function () {
             var daysCount = $("#daysCount").val();
             var adultCount = $("#adultCount").val();
             var childrenCount = $("#childrenCount").val();
-            var hotelRoomId = $("#hotelRoomSelect").val();
+            var hotelRoomId = $("#hotelRoomId").val();
             var hotelId = $("#hotelId").val();
             var rightValuesCount = 0;
             var userOrder = {"whenDate": null,
                 "daysCount":"0",
-                "adultCount": "0","childrenCount": "0",
+                "adultCount": "0",
+                "childrenCount": "0",
                 "hotelId": hotelId,
-                "hotelRoomId": "-1"};
+                "hotelRoomId": hotelRoomId};
 
             if (whenDate == '' || whenDate.length < 10) {
                 $("#whenDate").attr("style", "border: 1px solid red");
@@ -63,14 +64,7 @@ $(document).ready(function () {
                     $("#adultCount").attr("style", "border: 1px solid grey");
                 }
             }
-            if (hotelRoomId == -1) {
-                $("#hotelRoomSelect").parent().children(".nice-select").attr("style", "border: 1px solid red");
-            } else {
-                $("#hotelRoomSelect").parent().children(".nice-select").attr("style", "border: 1px solid grey");
-                rightValuesCount++;
-                userOrder.hotelRoomId = hotelRoomId;
-            }
-            if(rightValuesCount == 3 && rightAdAndChildValueCount > 0){
+            if(rightValuesCount == 2 && rightAdAndChildValueCount > 0){
                 $("#order-message").attr("style","display: none");
                 $.ajax({
                     type: "POST",

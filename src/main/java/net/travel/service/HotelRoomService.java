@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface HotelRoomService {
 
-    Optional<HotelRoom> getById(int hotelRoomId);
+    Optional<HotelRoom> getById(int hotelRoomId,boolean isLoadImageList);
 
     boolean existsById(int hotelId);
 }

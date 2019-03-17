@@ -2,6 +2,7 @@ package net.travel.model;
 
 import lombok.*;
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -32,4 +33,7 @@ public class HotelRoom {
 
     @ManyToOne
     private HotelRoomAttribute hotelRoomAttribute;
+
+    @OneToMany(mappedBy = "hotelRoom")
+    private List<HotelRoomImage> imageList;
 }

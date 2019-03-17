@@ -17,6 +17,6 @@ public class HotelImage {
 
     private String imgUrl;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Hotel hotel;
 }

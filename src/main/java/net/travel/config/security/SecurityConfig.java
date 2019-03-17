@@ -54,8 +54,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anonymous()
                 .antMatchers("/","/region",
                         "/city/by/regionId/*","/hotels/search","/hotels",
-                        "/places","/places/search","/hotel/detail/*","/hotel/room/id/*")
-                .permitAll()
+                        "/places","/places/search","/hotel/detail/*","/hotel/room/id/*",
+                        "/hotel/room/detail/*")
+                .hasAnyAuthority("ROLE_ANONYMOUS",UserType.USER.name())
                 .antMatchers("/admin","/admin/**")
                 .hasAuthority(UserType.ADMIN.name())
                 .antMatchers("/user/wish_list","/user/wish_list/*","/user/detail",

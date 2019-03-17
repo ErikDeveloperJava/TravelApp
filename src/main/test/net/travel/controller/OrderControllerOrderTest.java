@@ -187,7 +187,7 @@ public class OrderControllerOrderTest {
                         .hotelId(2)
                         .build());
         when(hotelService.existsById(2)).thenReturn(true);
-        when(hotelRoomService.getById(hotelRoomId)).thenReturn(Optional.empty());
+        when(hotelRoomService.getById(hotelRoomId,false)).thenReturn(Optional.empty());
         String responseContent = mvc.perform(post(URL)
                 .sessionAttr(SECURITY_SESSION_NAME, securityContext)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -216,7 +216,7 @@ public class OrderControllerOrderTest {
                         .hotelId(2)
                         .build());
         when(hotelService.existsById(2)).thenReturn(true);
-        when(hotelRoomService.getById(hotelRoomId)).thenReturn(Optional.of(HotelRoom
+        when(hotelRoomService.getById(hotelRoomId,false)).thenReturn(Optional.of(HotelRoom
                 .builder()
                 .id(hotelRoomId)
                 .busiedCount(12)
@@ -260,7 +260,7 @@ public class OrderControllerOrderTest {
                 .count(12)
                 .price(price)
                 .build();
-        when(hotelRoomService.getById(hotelRoomId)).thenReturn(Optional.of(hotelRoom));
+        when(hotelRoomService.getById(hotelRoomId,false)).thenReturn(Optional.of(hotelRoom));
         String responseContent = mvc.perform(post(URL)
                 .sessionAttr(SECURITY_SESSION_NAME, securityContext)
                 .contentType(MediaType.APPLICATION_JSON)

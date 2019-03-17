@@ -12,4 +12,5 @@ public class TemplateUtil {
     public static final String PLACES = "places";
     public static final String WISH_LIST = "wish_list";
     public static final String HOTEL_DETAIL = "hotel_detail";
+    public static final String HOTEL_ROOM_DETAIL = "hotel_room_detail";
 }
