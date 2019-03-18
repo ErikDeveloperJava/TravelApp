@@ -21,4 +21,9 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
         hotelRoomRepository.save(order.getHotelRoom());
     }
+
+    @Override
+    public int orderCountByUserId(int userId) {
+        return orderRepository.countByUser_id(userId);
+    }
 }

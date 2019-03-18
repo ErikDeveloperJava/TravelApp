@@ -3,15 +3,20 @@ package net.travel.service.impl;
 import net.travel.config.security.CurrentUser;
 import net.travel.dto.UserDto;
 import net.travel.model.User;
+import net.travel.model.UserOrder;
+import net.travel.repository.UserOrderRepository;
 import net.travel.repository.UserRepository;
 import net.travel.service.UserService;
 import net.travel.util.ImageUtil;
+import net.travel.util.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +27,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ImageUtil imageUtil;
+
+    @Autowired
+    private UserOrderRepository userOrderRepository;
+
+    @Autowired
+    private PaginationUtil paginationUtil;
 
     @Override
     public boolean existsByEmail(String email) {
@@ -90,6 +101,11 @@ public class UserServiceImpl implements UserService {
             throw e;
         }
         return imageName;
+    }
+
+    @Override
+    public List<UserOrder> getUserOrders(User user, Pageable pageable) {
+        return userOrderRepository.findByUser_Id(user.getId(),pageable);
     }
 
     public static UserDto userDtoBuilder(User user){

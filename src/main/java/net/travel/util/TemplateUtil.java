@@ -14,4 +14,5 @@ public class TemplateUtil {
     public static final String HOTEL_DETAIL = "hotel_detail";
     public static final String HOTEL_ROOM_DETAIL = "hotel_room_detail";
     public static final String PLACE_DETAIL = "place_detail";
+    public static final String USER_BOOKING = "user_order";
 }
