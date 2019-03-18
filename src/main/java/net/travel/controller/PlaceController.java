@@ -4,11 +4,17 @@ import net.travel.config.security.CurrentUser;
 import net.travel.dto.HotelDto;
 import net.travel.dto.PlaceDto;
 import net.travel.dto.SearchDto;
+import net.travel.model.Hotel;
+import net.travel.model.HotelImage;
+import net.travel.model.Place;
+import net.travel.model.PlaceImage;
 import net.travel.service.PlaceService;
 import net.travel.service.UserOrderService;
 import net.travel.service.UserService;
 import net.travel.service.WishListService;
+import net.travel.util.NumberUtil;
 import net.travel.util.TemplateUtil;
+import net.travel.util.model.TourDetailData;
 import net.travel.util.search.SearchModelType;
 import net.travel.util.search.SearchParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +24,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -37,6 +44,9 @@ public class PlaceController {
 
     @Autowired
     private WishListService wishListService;
+
+    @Autowired
+    private NumberUtil numberUtil;
 
     @GetMapping("/place")
     public @ResponseBody
@@ -83,5 +93,25 @@ public class PlaceController {
                 isUserExist ? currentUser.getUser().getId() : -1);
         return ResponseEntity
                 .ok(searchDto);
+    }
+
+    @GetMapping("/place/detail/{placeId}")
+    public String placeDetail(@PathVariable("placeId")String placeIdStr,
+                              @AuthenticationPrincipal CurrentUser currentUser,
+                              Model model){
+        int placeId = numberUtil.parseStrToInteger(placeIdStr);
+        if (placeId!= -1 && !placeService.existsById(placeId)) {
+            return "redirect:/";
+        }
+        boolean isUserExist = userService.isNotNull(currentUser);
+        if(isUserExist){
+            model.addAttribute("currentUser",currentUser.getUser());
+            model.addAttribute("bookingCount",userOrderService.countByUserId(currentUser.getUser().getId()));
+            model.addAttribute("wishListCount",wishListService.countByUserId(currentUser.getUser().getId()));
+        }
+        TourDetailData<Place, PlaceImage> hotelDetail = placeService
+                .getDetailById(placeId, isUserExist ? currentUser.getUser().getId() : -1);
+        model.addAttribute("tourDetail",hotelDetail);
+        return TemplateUtil.PLACE_DETAIL;
     }
 }

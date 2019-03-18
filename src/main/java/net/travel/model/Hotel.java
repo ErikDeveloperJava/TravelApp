@@ -22,7 +22,7 @@ public class Hotel {
 
     private String imgUrl;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Place place;
 
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.REMOVE})

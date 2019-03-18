@@ -27,4 +27,8 @@ public interface ReviewRepository extends JpaRepository<Review,Integer> {
     Integer findSumHotelRatingByRatingNumber(@Param("ratingNumber") int ratingNumber,
                                      @Param("hotelId") int hotelId);
 
+    @Query("select sum(r.rating)+0 from Review r where r.place.id=:placeId and r.rating=:ratingNumber")
+    Integer findSumPlaceRatingByRatingNumber(@Param("ratingNumber") int ratingNumber,
+                                     @Param("placeId") int placeId);
+
 }

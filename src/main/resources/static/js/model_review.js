@@ -4,6 +4,7 @@ $(document).ready(function () {
         var rating = $("#review_rating").val();
         var message = $("#review_message").val();
         var hotelId = $("#hotelId").val();
+        var placeId = $("#placeId").val();
         if(message.length < 10){
             $("#review-message-error").show();
         }else {
@@ -11,11 +12,12 @@ $(document).ready(function () {
             var reviewModel = {
                 "rating":rating,
                 "message":message,
-                "hotelId": hotelId
+                "hotelId": hotelId,
+                "placeId": placeId
             };
             $.ajax({
                 type: "POST",
-                url: "/hotel/review",
+                url: "/model/review",
                 data: JSON.stringify(reviewModel),
                 contentType: "application/json",
                 success: function (response) {

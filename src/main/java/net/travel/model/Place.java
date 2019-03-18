@@ -24,9 +24,12 @@ public class Place {
 
     private String imgUrl;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Contact contact;
 
     @OneToMany(mappedBy = "place")
     private List<Review> reviewList;
+
+    @OneToMany(mappedBy = "place")
+    private List<Hotel> hotelList;
 }

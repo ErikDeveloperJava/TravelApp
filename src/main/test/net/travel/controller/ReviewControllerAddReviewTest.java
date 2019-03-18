@@ -36,10 +36,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = HotelController.class)
-public class HotelControllerAddReviewTest {
+@WebMvcTest(controllers = ReviewController.class)
+public class ReviewControllerAddReviewTest {
 
-    private static final String URL = "/hotel/review";
+    private static final String URL = "/model/review";
     private static final String SECURITY_SESSION_NAME = "SPRING_SECURITY_CONTEXT";
 
     @Autowired
@@ -48,21 +48,6 @@ public class HotelControllerAddReviewTest {
     @MockBean
     @Qualifier("UDS")
     private UserDetailsService userDetailsService;
-
-    @MockBean
-    private UserService userService;
-
-    @MockBean
-    private UserOrderService userOrderService;
-
-    @MockBean
-    private WishListService wishListService;
-
-    @MockBean
-    private HotelService hotelService;
-
-    @MockBean
-    private NumberUtil numberUtil;
 
     @MockBean
     private ReviewService reviewService;

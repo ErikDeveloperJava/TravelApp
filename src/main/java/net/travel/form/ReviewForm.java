@@ -18,4 +18,6 @@ public class ReviewForm {
     private String message;
 
     private int hotelId;
+
+    private int placeId;
 }

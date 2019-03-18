@@ -95,7 +95,7 @@ public class HotelController {
     }
 
     @GetMapping("/hotel/detail/{hotelId}")
-    private String hotelDetail(@AuthenticationPrincipal CurrentUser currentUser,
+    public String hotelDetail(@AuthenticationPrincipal CurrentUser currentUser,
                                Model model, @PathVariable("hotelId")String strHotelId){
         int hotelId = numberUtil.parseStrToInteger(strHotelId);
         if (hotelId != -1 && !hotelService.existsById(hotelId)) {
@@ -113,30 +113,5 @@ public class HotelController {
         return TemplateUtil.HOTEL_DETAIL;
     }
 
-    @PostMapping("/hotel/review")
-    public @ResponseBody ResponseEntity addReview(@AuthenticationPrincipal CurrentUser currentUser,
-                                                  @RequestBody @Valid ReviewForm reviewForm, BindingResult result){
-        if(result.hasErrors()){
-            return ResponseEntity
-                    .ok(ReviewAddDto
-                            .builder()
-                            .messageError(true)
-                            .build());
-        }
-        Review review = Review
-                .builder()
-                .sendDate(new Date())
-                .rating(reviewForm.getRating())
-                .hotel(Hotel
-                        .builder()
-                        .id(reviewForm.getHotelId())
-                        .build())
-                .user(currentUser.getUser())
-                .message(reviewForm.getMessage())
-                .build();
-        LOGGER.info("{} saved successfully",review);
-        ReviewAddDto reviewAddDto = reviewService.add(review);
-        return ResponseEntity
-                .ok(reviewAddDto);
-    }
+
 }

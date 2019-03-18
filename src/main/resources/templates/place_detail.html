@@ -160,6 +160,30 @@
                             <br/>
                             <p th:text="*{model.information}">information</p>
                             <hr>
+                            <th:block th:if="${currentUser} ne null">
+                                <a style="cursor: pointer;" class="wishListChange btn_1 full-width outline wishlist"
+                                   th:id="'heart-full-place-' + *{model.id}" th:if="${tourDetail.existsWishList}">
+                                    <img src="/resources/icons/heartFull.png" style="width: 16px">
+                                    <th:block th:text="#{address.wishlist}">Add wishlist</th:block>
+                                </a>
+                                <a style="cursor: pointer;display: none" class="wishListChange btn_1 full-width outline wishlist"
+                                   th:id="'heart-full-place-' + *{model.id}" th:if="${!tourDetail.existsWishList}">
+                                    <img src="/resources/icons/heartFull.png" style="width: 16px">
+                                    <th:block th:text="#{address.wishlist}">Add wishlist</th:block>
+                                </a>
+                                <a style="cursor: pointer"
+                                   class="wishListChange btn_1 full-width outline wishlist"
+                                   th:id="'heart-empty-place-' + *{model.id}" th:if="${!tourDetail.existsWishList}">
+                                    <img src="/resources/icons/heartEmpty.png" style="width: 16px">
+                                    <th:block th:text="#{address.wishlist}">Add wishlist</th:block>
+                                </a>
+                                <a style="cursor: pointer;display: none"
+                                   class="wishListChange btn_1 full-width outline wishlist"
+                                   th:id="'heart-empty-place-' + *{model.id}" th:if="${tourDetail.existsWishList}">
+                                    <img src="/resources/icons/heartEmpty.png" style="width: 16px">
+                                    <th:block th:text="#{address.wishlist}">Add wishlist</th:block>
+                                </a>
+                            </th:block>
                             <h3 th:if="*{#lists.size(imageList)} > 0" th:text="#{photos}">photos</h3>
                             <hr>
                             <div id="imageDiv">
@@ -172,72 +196,31 @@
                             </div>
                             <!-- /rom_type -->
                             <div id="hotelRoom" style="margin-left: 33px;margin-top: 19px;">
-                                <h3 th:text="#{hotel.rooms}">Hotel Room</h3>
-                                <p th:unless="*{#lists.size(model.hotelRoomList)} > 0"
-                                   th:text="#{hotel.information.not.exist}">the rooms of the hotel is not
-                                    information </p>
+                                <h3 th:text="#{hotels}">Hotels</h3>
+                                <p th:unless="*{#lists.size(model.hotelList)} > 0"
+                                   th:text="#{hotel.information.not}">inforamtion about hotel are not exists</p>
                             </div>
-                            <th:block th:if="*{#lists.size(model.hotelRoomList)} > 0"
-                                      th:each="hotelRoom : *{model.hotelRoomList}">
+                            <th:block th:if="*{#lists.size(model.hotelList)} > 0"
+                                      th:each="hotel : *{model.hotelList}">
                                 <div class="room_type gray">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <a th:href="@{/hotel/room/detail/{roomId}(roomId = ${hotelRoom.id})}">
-                                                <img th:if="${hotelRoom.imgUrl} ne null"
-                                                     th:src="@{/resources/{imgUrl}(imgUrl = ${hotelRoom.imgUrl})}"
+                                            <a th:href="@{/hotel/detail/{hotelId}(hotelId = ${hotel.id})}">
+                                                <img th:if="${hotel.imgUrl} ne null"
+                                                     th:src="@{/resources/{imgUrl}(imgUrl = ${hotel.imgUrl})}"
                                                      class="img-fluid" alt="">
-                                                <img th:if="${hotelRoom.imgUrl} eq null"
+                                                <img th:if="${hotel.imgUrl} eq null"
                                                      src="/resources/default/hotel_room.jpg" class="img-fluid" alt="">
                                             </a>
                                         </div>
                                         <div class="col-md-8">
-                                            <a th:href="@{/hotel/room/detail/{roomId}(roomId = ${hotelRoom.id})}">
-                                                <h4 th:text="${hotelRoom.name}">hotel room name</h4>
+                                            <a th:href="@{/hotel/detail/{hotelId}(hotelId = ${hotel.id})}">
+                                                <h4 th:text="${hotel.name}">hotel room name</h4>
                                             </a>
-                                            <p th:if="${#strings.length(hotelRoom.information)} > 120"
-                                               th:text="${#strings.substring(hotelRoom.information,0,120)}">hotel room info</p>
-                                            <p th:if="${#strings.length(hotelRoom.information)} <= 120"
-                                               th:text="${hotelRoom.information}">hotel room info</p>
-                                            <ul class="hotel_facilities">
-                                                <li>
-                                                    <span style="color: #1da1f2;font-size: 13px;"
-                                                          th:text="#{hotel.number.rooms.count}">rooms count</span>
-                                                    <span th:text="':  ' + ${hotelRoom.hotelRoomAttribute.roomCount}">busied rooms count</span>
-                                                </li>
-                                                <li th:if="${hotelRoom.busiedCount} eq ${hotelRoom.count}">
-                                                    <span th:text="#{all.busied}"
-                                                          style="color: #1da1f2;font-size: 13px;">all numbers have already busied</span>
-                                                </li>
-                                                <li th:id="'all-rooms-busied-'+${hotelRoom.id} " style="display: none"
-                                                    th:unless="${hotelRoom.busiedCount} eq ${hotelRoom.count}">
-                                                    <span th:text="#{all.busied}"
-                                                          style="color: #1da1f2;font-size: 13px;">all numbers have already busied</span>
-                                                </li>
-                                                <li th:id="'busied-rooms-count-blog-' + ${hotelRoom.id}" th:if="${hotelRoom.busiedCount} < ${hotelRoom.count}">
-                                                    <span style="color: #1da1f2;font-size: 13px;"
-                                                          th:text="#{busied.rooms.count}">busied numbers count</span>
-                                                    <span th:id="'busied-rooms-count-text-' + ${hotelRoom.id}" th:text="':  ' + ${hotelRoom.busiedCount}">busied numbers count</span>
-                                                </li>
-                                                <li th:id="'busied-rooms-count-blog-' + ${hotelRoom.id}" style="display: none" th:unless="${hotelRoom.busiedCount} < ${hotelRoom.count}">
-                                                    <span style="color: #1da1f2;font-size: 13px;"
-                                                          th:text="#{busied.rooms.count}">busied numbers count</span>
-                                                    <span th:id="'busied-rooms-count-text-' + ${hotelRoom.id}" th:text="':  0'">busied numbers count</span>
-                                                </li>
-                                                <li>
-                                                    <span style="color: #1da1f2;font-size: 13px;"
-                                                          th:text="#{all.rooms.count}">all rooms count</span>
-                                                    <span th:id="'all-rooms-count-' + ${hotelRoom.id}" th:text="':  ' + ${hotelRoom.count}">all rooms count</span>
-                                                </li>
-                                                <li th:if="${hotelRoom.busiedCount} ne ${hotelRoom.count}">
-                                                    <span style="color: #1da1f2;font-size: 13px;"
-                                                          th:text="#{free.rooms.count}">free rooms count</span>
-                                                    <span th:id="'free-rooms-count-' + ${hotelRoom.id}" th:text="':  ' + (${hotelRoom.count} - ${hotelRoom.busiedCount})">free rooms count</span>
-                                                </li>
-                                                <li>
-                                                    <span style="color: #1da1f2;font-size: 13px;" th:text="#{price}">price</span>
-                                                    <span th:text="':  $ ' + ${hotelRoom.price}">price</span>
-                                                </li>
-                                            </ul>
+                                            <p th:if="${#strings.length(hotel.information)} > 120"
+                                               th:text="${#strings.substring(hotel.information,0,120)}">hotel room info</p>
+                                            <p th:if="${#strings.length(hotel.information)} <= 120"
+                                               th:text="${hotel.information}">hotel room info</p>
                                         </div>
                                     </div>
                                     <!-- /row -->
@@ -364,8 +347,8 @@
                             <h5 th:text="#{write.review}">Write a review</h5>
                             <form id="reviewForm">
                                 <div class="row">
-                                    <input type="hidden" id="hotelId" th:value="*{model.id}">
-                                    <input type="hidden" id="placeId" value="0">
+                                    <input type="hidden" id="placeId" th:value="*{model.id}">
+                                    <input type="hidden" id="hotelId" value="0">
                                     <div class="form-group col-md-6">
                                         <label th:text="#{rating}">Rating </label>
                                         <div class="custom-select-form">
@@ -396,148 +379,149 @@
                     </div>
                     <!-- /col -->
 
-                    <aside class="col-lg-4" id="sidebar">
-                        <div class="box_detail booking">
-                            <div class="price">
-                                <span th:text="#{order}">Order</span>
-                                <div class="score">
-                                    <span id="orderPrice" style="color: #32a067" th:text="#{price} + ' 0 $'">
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="alert alert-info in alert-success" id="order-message" style="display: none">
-                                <a style="cursor: pointer" class="close" id="close-order-message">×</a>
-                                <span id="message-blog">In that all count of the rooms have already busied</span>
-                            </div>
+                    <!--<aside class="col-lg-4" id="sidebar">-->
+                        <!--<div class="box_detail booking">-->
+                            <!--<div class="price">-->
+                                <!--<span th:text="#{order}">Order</span>-->
+                                <!--<div class="score">-->
+                                    <!--<span id="orderPrice" style="color: #32a067" th:text="#{price} + ' 0 $'">-->
+                                    <!--</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="alert alert-info in alert-success" id="order-message" style="display: none">-->
+                                <!--<a style="cursor: pointer" class="close" id="close-order-message">×</a>-->
+                                <!--<span id="message-blog">In that all count of the rooms have already busied</span>-->
+                            <!--</div>-->
 
-                            <form id="orderForm">
-                                <input type="hidden" id="orderPriceInput" value="0">
-                                <div class="form-group">
-                                    <label for="whenDate" th:text="#{since.date}">date</label>
-                                    <input class="form-control" type="datetime-local"
-                                           id="whenDate" name="whenDate">
-                                </div>
+                            <!--<form id="orderForm">-->
+                                <!--<input type="hidden" id="hotelId" th:value="*{model.id}">-->
+                                <!--<input type="hidden" id="orderPriceInput" value="0">-->
+                                <!--<div class="form-group">-->
+                                    <!--<label for="whenDate" th:text="#{since.date}">date</label>-->
+                                    <!--<input class="form-control" type="datetime-local"-->
+                                           <!--id="whenDate" name="whenDate">-->
+                                <!--</div>-->
 
-                                <div class="form-group">
-                                    <label for="adultCount" th:text="#{adults}">days</label>
-                                    <input class="form-control" type="number" id="adultCount" value="0" step="0">
-                                </div>
+                                <!--<div class="form-group">-->
+                                    <!--<label for="adultCount" th:text="#{adults}">days</label>-->
+                                    <!--<input class="form-control" type="number" id="adultCount" value="0" step="0">-->
+                                <!--</div>-->
 
-                                <div class="form-group">
-                                    <label for="childrenCount" th:text="#{children}">days</label>
-                                    <input class="form-control" type="number" id="childrenCount" value="0" step="0">
-                                </div>
-                                <div class="form-group clearfix">
-                                    <div class="custom-select-form">
-                                        <select class="wide" id="hotelRoomSelect" name="hotleRoomId">
-                                            <option value="-1" th:text="#{room.type}">Room Type</option>
-                                            <th:block th:each="hotelRoom : *{model.hotelRoomList}">
-                                                <option th:value="${hotelRoom.id}">
-                                                    <th:block th:if="${#strings.length(hotelRoom.name)} > 20"
-                                                              th:text="${#strings.substring(hotelRoom.name,0,20)}">hotel
-                                                        room name
-                                                    </th:block>
-                                                    <th:block th:unless="${#strings.length(hotelRoom.name)} > 20"
-                                                              th:text="${hotelRoom.name}">hotel room name
-                                                    </th:block>
-                                                </option>
-                                            </th:block>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="daysCount" th:text="#{days.count}">days count</label>
-                                    <input class="form-control" type="number" id="daysCount" value="0" step="0">
-                                </div>
+                                <!--<div class="form-group">-->
+                                    <!--<label for="childrenCount" th:text="#{children}">days</label>-->
+                                    <!--<input class="form-control" type="number" id="childrenCount" value="0" step="0">-->
+                                <!--</div>-->
+                                <!--<div class="form-group clearfix">-->
+                                    <!--<div class="custom-select-form">-->
+                                        <!--<select class="wide" id="hotelRoomSelect" name="hotleRoomId">-->
+                                            <!--<option value="-1" th:text="#{room.type}">Room Type</option>-->
+                                            <!--<th:block th:each="hotelRoom : *{model.hotelRoomList}">-->
+                                                <!--<option th:value="${hotelRoom.id}">-->
+                                                    <!--<th:block th:if="${#strings.length(hotelRoom.name)} > 20"-->
+                                                              <!--th:text="${#strings.substring(hotelRoom.name,0,20)}">hotel-->
+                                                        <!--room name-->
+                                                    <!--</th:block>-->
+                                                    <!--<th:block th:unless="${#strings.length(hotelRoom.name)} > 20"-->
+                                                              <!--th:text="${hotelRoom.name}">hotel room name-->
+                                                    <!--</th:block>-->
+                                                <!--</option>-->
+                                            <!--</th:block>-->
+                                        <!--</select>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="form-group">-->
+                                    <!--<label for="daysCount" th:text="#{days.count}">days count</label>-->
+                                    <!--<input class="form-control" type="number" id="daysCount" value="0" step="0">-->
+                                <!--</div>-->
 
-                                <th:block th:if="${currentUser} ne null">
-                                    <script>
-                                        var localePrice = $("#locale_price").attr("content");
-                                        var hotelRoomPrice = -1;
+                                <!--<th:block th:if="${currentUser} ne null">-->
+                                    <!--<script>-->
+                                        <!--var localePrice = $("#locale_price").attr("content");-->
+                                        <!--var hotelRoomPrice = -1;-->
 
-                                        $("#daysCount").on("change", function () {
-                                            var actualDay = $("#daysCount").val();
-                                            if (parseInt(actualDay) == 0 || hotelRoomPrice == -1) {
-                                                setOrderPrice(0);
-                                            } else {
-                                                setOrderPrice(parseInt(hotelRoomPrice) * parseInt(actualDay))
-                                            }
-                                        });
+                                        <!--$("#daysCount").on("change", function () {-->
+                                            <!--var actualDay = $("#daysCount").val();-->
+                                            <!--if (parseInt(actualDay) == 0 || hotelRoomPrice == -1) {-->
+                                                <!--setOrderPrice(0);-->
+                                            <!--} else {-->
+                                                <!--setOrderPrice(parseInt(hotelRoomPrice) * parseInt(actualDay))-->
+                                            <!--}-->
+                                        <!--});-->
 
-                                        function setOrderPrice(price) {
-                                            $("#orderPrice").text(localePrice + " " + price + " $")
-                                        }
+                                        <!--function setOrderPrice(price) {-->
+                                            <!--$("#orderPrice").text(localePrice + " " + price + " $")-->
+                                        <!--}-->
 
-                                        $("#hotelRoomSelect").on("change", function () {
-                                            var hotelRoomId = parseInt($(this).val());
-                                            if (hotelRoomId == -1) {
-                                                hotelRoomPrice = -1;
-                                                $("#daysCount").val("0");
-                                                setOrderPrice(0);
-                                            } else {
-                                                getHotelRoomPrice(hotelRoomId)
-                                            }
-                                        })
+                                        <!--$("#hotelRoomSelect").on("change", function () {-->
+                                            <!--var hotelRoomId = parseInt($(this).val());-->
+                                            <!--if (hotelRoomId == -1) {-->
+                                                <!--hotelRoomPrice = -1;-->
+                                                <!--$("#daysCount").val("0");-->
+                                                <!--setOrderPrice(0);-->
+                                            <!--} else {-->
+                                                <!--getHotelRoomPrice(hotelRoomId)-->
+                                            <!--}-->
+                                        <!--})-->
 
-                                        function getHotelRoomPrice(hotelRoomId) {
-                                            $.ajax({
-                                                type: "GET",
-                                                url: "/hotel/room/id/" + hotelRoomId,
-                                                contentType: "application/json",
-                                                success: function (hotelRoom) {
-                                                    hotelRoomPrice = hotelRoom.price;
-                                                    setOrderPrice(parseInt(hotelRoomPrice) * parseInt($("#daysCount").val()))
-                                                },
-                                                error: function () {
-                                                    window.location = "/500";
-                                                }
-                                            })
-                                        }
-                                    </script>
-                                </th:block>
-                                <button th:if="${currentUser} ne null" type="submit"
-                                        class=" add_top_30 btn_1 full-width purchase" th:text="#{order.to}">
-                                    Order to
-                                </button>
-                                <a th:if="${currentUser} eq null" href="/login"
-                                   class=" add_top_30 btn_1 full-width purchase" th:text="#{order.to}">
-                                    Order to
-                                </a>
-                            </form>
-                            <th:block th:if="${currentUser} ne null">
-                                <a style="cursor: pointer;" class="wishListChange btn_1 full-width outline wishlist"
-                                   th:id="'heart-full-hotel-' + *{model.id}" th:if="${tourDetail.existsWishList}">
-                                    <img src="/resources/icons/heartFull.png" style="width: 16px">
-                                    <th:block th:text="#{address.wishlist}">Add wishlist</th:block>
-                                </a>
-                                <a style="cursor: pointer;display: none" class="wishListChange btn_1 full-width outline wishlist"
-                                   th:id="'heart-full-hotel-' + *{model.id}" th:if="${!tourDetail.existsWishList}">
-                                    <img src="/resources/icons/heartFull.png" style="width: 16px">
-                                    <th:block th:text="#{address.wishlist}">Add wishlist</th:block>
-                                </a>
-                                <a style="cursor: pointer"
-                                   class="wishListChange btn_1 full-width outline wishlist"
-                                   th:id="'heart-empty-hotel-' + *{model.id}" th:if="${!tourDetail.existsWishList}">
-                                    <img src="/resources/icons/heartEmpty.png" style="width: 16px">
-                                    <th:block th:text="#{address.wishlist}">Add wishlist</th:block>
-                                </a>
-                                <a style="cursor: pointer;display: none"
-                                   class="wishListChange btn_1 full-width outline wishlist"
-                                   th:id="'heart-empty-hotel-' + *{model.id}" th:if="${tourDetail.existsWishList}">
-                                    <img src="/resources/icons/heartEmpty.png" style="width: 16px">
-                                    <th:block th:text="#{address.wishlist}">Add wishlist</th:block>
-                                </a>
-                            </th:block>
-                        </div>
-                        <ul class="share-buttons">
-                            <li><a class="fb-share" href="hotel-detail.html#0"><i class="social_facebook"></i> Share</a>
-                            </li>
-                            <li><a class="twitter-share" href="hotel-detail.html#0"><i class="social_twitter"></i> Tweet</a>
-                            </li>
-                            <li><a class="gplus-share" href="hotel-detail.html#0"><i class="social_googleplus"></i>
-                                Share</a></li>
-                        </ul>
-                    </aside>
+                                        <!--function getHotelRoomPrice(hotelRoomId) {-->
+                                            <!--$.ajax({-->
+                                                <!--type: "GET",-->
+                                                <!--url: "/hotel/room/id/" + hotelRoomId,-->
+                                                <!--contentType: "application/json",-->
+                                                <!--success: function (hotelRoom) {-->
+                                                    <!--hotelRoomPrice = hotelRoom.price;-->
+                                                    <!--setOrderPrice(parseInt(hotelRoomPrice) * parseInt($("#daysCount").val()))-->
+                                                <!--},-->
+                                                <!--error: function () {-->
+                                                    <!--window.location = "/500";-->
+                                                <!--}-->
+                                            <!--})-->
+                                        <!--}-->
+                                    <!--</script>-->
+                                <!--</th:block>-->
+                                <!--<button th:if="${currentUser} ne null" type="submit"-->
+                                        <!--class=" add_top_30 btn_1 full-width purchase" th:text="#{order.to}">-->
+                                    <!--Order to-->
+                                <!--</button>-->
+                                <!--<a th:if="${currentUser} eq null" href="/login"-->
+                                   <!--class=" add_top_30 btn_1 full-width purchase" th:text="#{order.to}">-->
+                                    <!--Order to-->
+                                <!--</a>-->
+                            <!--</form>-->
+                            <!--<th:block th:if="${currentUser} ne null">-->
+                                <!--<a style="cursor: pointer;" class="wishListChange btn_1 full-width outline wishlist"-->
+                                   <!--th:id="'heart-full-hotel-' + *{model.id}" th:if="${tourDetail.existsWishList}">-->
+                                    <!--<img src="/resources/icons/heartFull.png" style="width: 16px">-->
+                                    <!--<th:block th:text="#{address.wishlist}">Add wishlist</th:block>-->
+                                <!--</a>-->
+                                <!--<a style="cursor: pointer;display: none" class="wishListChange btn_1 full-width outline wishlist"-->
+                                   <!--th:id="'heart-full-hotel-' + *{model.id}" th:if="${!tourDetail.existsWishList}">-->
+                                    <!--<img src="/resources/icons/heartFull.png" style="width: 16px">-->
+                                    <!--<th:block th:text="#{address.wishlist}">Add wishlist</th:block>-->
+                                <!--</a>-->
+                                <!--<a style="cursor: pointer"-->
+                                   <!--class="wishListChange btn_1 full-width outline wishlist"-->
+                                   <!--th:id="'heart-empty-hotel-' + *{model.id}" th:if="${!tourDetail.existsWishList}">-->
+                                    <!--<img src="/resources/icons/heartEmpty.png" style="width: 16px">-->
+                                    <!--<th:block th:text="#{address.wishlist}">Add wishlist</th:block>-->
+                                <!--</a>-->
+                                <!--<a style="cursor: pointer;display: none"-->
+                                   <!--class="wishListChange btn_1 full-width outline wishlist"-->
+                                   <!--th:id="'heart-empty-hotel-' + *{model.id}" th:if="${tourDetail.existsWishList}">-->
+                                    <!--<img src="/resources/icons/heartEmpty.png" style="width: 16px">-->
+                                    <!--<th:block th:text="#{address.wishlist}">Add wishlist</th:block>-->
+                                <!--</a>-->
+                            <!--</th:block>-->
+                        <!--</div>-->
+                        <!--<ul class="share-buttons">-->
+                            <!--<li><a class="fb-share" href="hotel-detail.html#0"><i class="social_facebook"></i> Share</a>-->
+                            <!--</li>-->
+                            <!--<li><a class="twitter-share" href="hotel-detail.html#0"><i class="social_twitter"></i> Tweet</a>-->
+                            <!--</li>-->
+                            <!--<li><a class="gplus-share" href="hotel-detail.html#0"><i class="social_googleplus"></i>-->
+                                <!--Share</a></li>-->
+                        <!--</ul>-->
+                    <!--</aside>-->
                 </div>
                 <!-- /row -->
             </div>
@@ -726,7 +710,6 @@
     </div>
 </div>
 <script th:if="${currentUser} ne null" src="/resources/js/wishList.js"></script>
-<script th:if="${currentUser} ne null" src="/resources/js/hotel_room_order.js"></script>
 
 </body>
 </html>

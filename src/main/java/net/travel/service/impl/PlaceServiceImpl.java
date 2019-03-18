@@ -2,15 +2,17 @@ package net.travel.service.impl;
 
 import net.travel.dto.PlaceDto;
 import net.travel.dto.SearchDto;
-import net.travel.model.Hotel;
-import net.travel.model.Place;
+import net.travel.model.*;
+import net.travel.repository.PlaceImageRepository;
 import net.travel.repository.PlaceRepository;
 import net.travel.repository.ReviewRepository;
 import net.travel.repository.WishListRepository;
 import net.travel.service.PlaceService;
 import net.travel.util.NumberUtil;
 import net.travel.util.PaginationUtil;
+import net.travel.util.model.RatingPercent;
 import net.travel.util.model.TourData;
+import net.travel.util.model.TourDetailData;
 import net.travel.util.search.SearchParam;
 import net.travel.util.search.SearchParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,9 @@ public class PlaceServiceImpl implements PlaceService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private PlaceImageRepository placeImageRepository;
+
     @Override
     public List<TourData<Place>> getByHighestRating(int userId, Pageable pageable) {
         List<Place> placeList = placeRepository.findHighestRating(pageable);
@@ -58,8 +63,8 @@ public class PlaceServiceImpl implements PlaceService {
             tourDataList.add(TourData
                     .<Place>builder()
                     .tourPlace(place)
-                    .rating(numberUtil.countRating(sumRating,count))
-                    .existsWishList(userId != -1 && wishListRepository.existsByUser_idAndPlace_id(userId,place.getId()))
+                    .rating(numberUtil.countRating(sumRating, count))
+                    .existsWishList(userId != -1 && wishListRepository.existsByUser_idAndPlace_id(userId, place.getId()))
                     .build());
         }
         return tourDataList;
@@ -78,23 +83,23 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public SearchDto<PlaceDto> getByParams(SearchParam searchParam, Pageable pageable, int userId) {
         String countQuery = searchParser.buildQuery(searchParam, Optional.empty());
-        BigInteger bigInteger = (BigInteger)entityManager.createNativeQuery(countQuery)
+        BigInteger bigInteger = (BigInteger) entityManager.createNativeQuery(countQuery)
                 .getResultList().get(0);
         int count = bigInteger.intValue();
         int length = paginationUtil.getPaginationLength(count, pageable.getPageSize());
-        pageable = paginationUtil.checkPageableObject(pageable,length);
+        pageable = paginationUtil.checkPageableObject(pageable, length);
         String placeQuery = searchParser.buildQuery(searchParam, Optional.of(pageable));
-        List<Place> placeList = entityManager.createNativeQuery(placeQuery,Place.class)
+        List<Place> placeList = entityManager.createNativeQuery(placeQuery, Place.class)
                 .getResultList();
         List<TourData<PlaceDto>> tourDataList = new ArrayList<>();
-        for (Place place: placeList) {
+        for (Place place : placeList) {
             Integer ratingSum = reviewRepository.sumRatingByPlaceId(place.getId());
             int ratingCount = reviewRepository.countByPlaceId(place.getId());
             TourData<PlaceDto> tourData = TourData.
                     <PlaceDto>builder()
                     .tourPlace(buildPlaceDto(place))
-                    .rating(numberUtil.countRating(ratingSum,ratingCount))
-                    .existsWishList(userId != -1 && wishListRepository.existsByUser_idAndPlace_id(userId,place.getId()))
+                    .rating(numberUtil.countRating(ratingSum, ratingCount))
+                    .existsWishList(userId != -1 && wishListRepository.existsByUser_idAndPlace_id(userId, place.getId()))
                     .build();
             tourDataList.add(tourData);
         }
@@ -109,7 +114,35 @@ public class PlaceServiceImpl implements PlaceService {
 
     }
 
-    public static PlaceDto buildPlaceDto(Place place){
+    @Override
+    public TourDetailData<Place, PlaceImage> getDetailById(int id, int userId) {
+        Place place = placeRepository.findById(id).get();
+        place.getHotelList();
+        List<PlaceImage> placeImageList = placeImageRepository.findAllByPlace_Id(id);
+        List<Review> reviewList = reviewRepository.findByPlace_Id(id);
+        Integer ratingSum = reviewRepository.sumRatingByPlaceId(id);
+        int ratingCount = reviewRepository.countByPlaceId(id);
+        boolean existsWishList = userId != -1 && wishListRepository
+                .existsByUser_idAndPlace_id(userId, id);
+        List<RatingPercent> ratingPercentList = ReviewServiceImpl
+                .countRatingPercent(id,ratingSum == null ? 0 : ratingSum,numberUtil,reviewRepository::findSumPlaceRatingByRatingNumber);
+        return TourDetailData.<Place,PlaceImage>
+                builder()
+                .model(place)
+                .imageList(placeImageList)
+                .reviewList(reviewList)
+                .rating(numberUtil.countRating(ratingSum, ratingCount))
+                .existsWishList(existsWishList)
+                .ratingPercentList(ratingPercentList)
+                .build();
+    }
+
+    @Override
+    public boolean existsById(int placeId) {
+        return placeRepository.existsById(placeId);
+    }
+
+    public static PlaceDto buildPlaceDto(Place place) {
         return PlaceDto
                 .builder()
                 .id(place.getId())

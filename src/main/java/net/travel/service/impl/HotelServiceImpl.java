@@ -117,21 +117,8 @@ public class HotelServiceImpl implements HotelService {
         int ratingCount = reviewRepository.countByHotelId(id);
         boolean existsWishList = userId != -1 && wishListRepository
                 .existsByUser_idAndHotel_id(userId,hotel.getId());
-        List<RatingPercent> ratingPercentList = new ArrayList<>();
-        for (int i = 5; i > 0; i--) {
-            Integer ratingNumberSum = reviewRepository.findSumHotelRatingByRatingNumber(i, hotel.getId());
-            int percent;
-            if(ratingNumberSum == null){
-                percent = 0;
-            }else{
-                percent = numberUtil.countPercent(ratingNumberSum,ratingSum);
-            }
-            ratingPercentList.add(RatingPercent
-                    .builder()
-                    .percent(percent)
-                    .ratingNumber(i)
-                    .build());
-        }
+        List<RatingPercent> ratingPercentList = ReviewServiceImpl
+                .countRatingPercent(id,ratingSum == null ? 0 : ratingSum,numberUtil,reviewRepository::findSumHotelRatingByRatingNumber);
         return TourDetailData.<Hotel, HotelImage>
                 builder()
                 .model(hotel)
