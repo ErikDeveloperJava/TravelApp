@@ -19,8 +19,6 @@ public interface UserService {
 
     void update(User user);
 
-    boolean isNotNull(CurrentUser currentUser);
-
     void deleteUserImage(CurrentUser currentUser);
 
     String changeUserImage(CurrentUser currentUser,MultipartFile multipartFile);

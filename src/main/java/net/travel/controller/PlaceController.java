@@ -12,6 +12,8 @@ import net.travel.service.PlaceService;
 import net.travel.service.UserOrderService;
 import net.travel.service.UserService;
 import net.travel.service.WishListService;
+import net.travel.util.AuthenticationUtil;
+import net.travel.util.DataUtil;
 import net.travel.util.NumberUtil;
 import net.travel.util.TemplateUtil;
 import net.travel.util.model.TourDetailData;
@@ -37,16 +39,12 @@ public class PlaceController {
     private PlaceService placeService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserOrderService userOrderService;
-
-    @Autowired
-    private WishListService wishListService;
-
+    private AuthenticationUtil authenticationUtil;
     @Autowired
     private NumberUtil numberUtil;
+
+    @Autowired
+    private DataUtil dataUtil;
 
     @GetMapping("/place")
     public @ResponseBody
@@ -58,13 +56,7 @@ public class PlaceController {
 
     @GetMapping("/places")
     public String placesPage(@AuthenticationPrincipal CurrentUser currentUser, Model model){
-        boolean isUserExist = userService.isNotNull(currentUser);
-        if(isUserExist){
-            model.addAttribute("currentUser",currentUser.getUser());
-            model.addAttribute("bookingCount",userOrderService.countByUserId(currentUser.getUser().getId()));
-            model.addAttribute("wishListCount",wishListService.countByUserId(currentUser.getUser().getId()));
-        }
-
+        authenticationUtil.addUserDataInModel(currentUser,model);
         return TemplateUtil.PLACES;
     }
 
@@ -88,9 +80,9 @@ public class PlaceController {
                 .order(order)
                 .userId(-1)
                 .build();
-        boolean isUserExist = userService.isNotNull(currentUser);
-        SearchDto<PlaceDto> searchDto = placeService.getByParams(searchParam, pageable,
-                isUserExist ? currentUser.getUser().getId() : -1);
+        boolean isUserExist = currentUser != null;
+        SearchDto<PlaceDto> searchDto = dataUtil.getSearchModel(searchParam,
+                pageable,isUserExist ? currentUser.getUser().getId() : -1,placeService::getByParams);
         return ResponseEntity
                 .ok(searchDto);
     }
@@ -100,18 +92,13 @@ public class PlaceController {
                               @AuthenticationPrincipal CurrentUser currentUser,
                               Model model){
         int placeId = numberUtil.parseStrToInteger(placeIdStr);
-        if (placeId!= -1 && !placeService.existsById(placeId)) {
+        if (placeId == -1 || !placeService.existsById(placeId)) {
             return "redirect:/";
         }
-        boolean isUserExist = userService.isNotNull(currentUser);
-        if(isUserExist){
-            model.addAttribute("currentUser",currentUser.getUser());
-            model.addAttribute("bookingCount",userOrderService.countByUserId(currentUser.getUser().getId()));
-            model.addAttribute("wishListCount",wishListService.countByUserId(currentUser.getUser().getId()));
-        }
-        TourDetailData<Place, PlaceImage> hotelDetail = placeService
-                .getDetailById(placeId, isUserExist ? currentUser.getUser().getId() : -1);
-        model.addAttribute("tourDetail",hotelDetail);
+        authenticationUtil.addUserDataInModel(currentUser,model);
+        boolean isUserExist = currentUser != null;
+        model.addAttribute("tourDetail",dataUtil.getModelDetailById(isUserExist ? currentUser.getUser().getId() : -1, placeId,
+                placeService::getDetailById));
         return TemplateUtil.PLACE_DETAIL;
     }
 }

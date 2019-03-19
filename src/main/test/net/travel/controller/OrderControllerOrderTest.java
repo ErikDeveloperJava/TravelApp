@@ -12,6 +12,7 @@ import net.travel.model.enums.UserType;
 import net.travel.service.HotelRoomService;
 import net.travel.service.HotelService;
 import net.travel.service.OrderService;
+import net.travel.util.AuthenticationUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,6 +72,9 @@ public class OrderControllerOrderTest {
     private ObjectMapper objectMapper;
 
     private static SimpleDateFormat simpleDateFormat;
+
+    @MockBean
+    private AuthenticationUtil authenticationUtil;
 
     @BeforeClass
     public static void beforeClass() {

@@ -8,6 +8,7 @@ import net.travel.service.UserOrderService;
 import net.travel.service.UserService;
 import net.travel.service.WishListService;
 import net.travel.service.impl.HotelRoomServiceImpl;
+import net.travel.util.AuthenticationUtil;
 import net.travel.util.NumberUtil;
 import net.travel.util.TemplateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,7 @@ public class HotelRoomController {
     private NumberUtil numberUtil;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserOrderService userOrderService;
-
-    @Autowired
-    private WishListService wishListService;
+    private AuthenticationUtil authenticationUtil;
 
     @GetMapping("/id/{hotelRoomId}")
     public @ResponseBody
@@ -63,12 +58,7 @@ public class HotelRoomController {
         if(id == -1 || !(hotelRoomOptional= hotelRoomService.getById(id, true)).isPresent()){
             return "redirect:/";
         }
-        boolean isUserExist = userService.isNotNull(currentUser);
-        if (isUserExist) {
-            model.addAttribute("currentUser", currentUser.getUser());
-            model.addAttribute("bookingCount", userOrderService.countByUserId(currentUser.getUser().getId()));
-            model.addAttribute("wishListCount", wishListService.countByUserId(currentUser.getUser().getId()));
-        }
+        authenticationUtil.addUserDataInModel(currentUser,model);
         model.addAttribute("hotelRoom",hotelRoomOptional.get());
         return TemplateUtil.HOTEL_ROOM_DETAIL;
     }

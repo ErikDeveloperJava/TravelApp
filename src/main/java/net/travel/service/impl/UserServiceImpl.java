@@ -8,7 +8,6 @@ import net.travel.repository.UserOrderRepository;
 import net.travel.repository.UserRepository;
 import net.travel.service.UserService;
 import net.travel.util.ImageUtil;
-import net.travel.util.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,9 +29,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserOrderRepository userOrderRepository;
-
-    @Autowired
-    private PaginationUtil paginationUtil;
 
     @Override
     public boolean existsByEmail(String email) {
@@ -65,11 +61,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(User user) {
         userRepository.save(user);
-    }
-
-    @Override
-    public boolean isNotNull(CurrentUser currentUser) {
-        return currentUser != null;
     }
 
     @Transactional

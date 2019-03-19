@@ -1,10 +1,13 @@
 package net.travel.controller;
 
+import net.travel.model.Hotel;
 import net.travel.model.HotelRoom;
+import net.travel.model.HotelRoomAttribute;
 import net.travel.service.HotelRoomService;
 import net.travel.service.UserOrderService;
 import net.travel.service.UserService;
 import net.travel.service.WishListService;
+import net.travel.util.AuthenticationUtil;
 import net.travel.util.NumberUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -57,6 +61,9 @@ public class HotelRoomControllerRoomDetailTest {
     @MockBean
     private WishListService wishListService;
 
+    @MockBean
+    private AuthenticationUtil authenticationUtil;
+
     @TestConfiguration
     static class Config{
         @Bean
@@ -92,6 +99,9 @@ public class HotelRoomControllerRoomDetailTest {
         HotelRoom hotelRoom = HotelRoom
                 .builder()
                 .id(id)
+                .imageList(new ArrayList<>())
+                .hotel(Hotel.builder().build())
+                .hotelRoomAttribute(HotelRoomAttribute.builder().build())
                 .build();
         when(hotelRoomService.getById(id,true))
                 .thenReturn(Optional.of(hotelRoom));

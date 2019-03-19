@@ -7,6 +7,7 @@ import net.travel.model.HotelRoom;
 import net.travel.service.HotelRoomService;
 import net.travel.service.impl.HotelRoomServiceImpl;
 import net.travel.service.impl.ReviewServiceImpAddTest;
+import net.travel.util.AuthenticationUtil;
 import net.travel.util.NumberUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +53,9 @@ public class HotelRoomControllerGetByIdTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private AuthenticationUtil authenticationUtil;
 
     @TestConfiguration
     static class TestConfig {

@@ -2,6 +2,7 @@ package net.travel.controller;
 
 import net.travel.config.security.CurrentUser;
 import net.travel.dto.HotelDto;
+import net.travel.dto.PlaceDto;
 import net.travel.dto.ReviewAddDto;
 import net.travel.dto.SearchDto;
 import net.travel.form.ReviewForm;
@@ -10,6 +11,8 @@ import net.travel.model.HotelImage;
 import net.travel.model.Review;
 import net.travel.repository.ReviewRepository;
 import net.travel.service.*;
+import net.travel.util.AuthenticationUtil;
+import net.travel.util.DataUtil;
 import net.travel.util.NumberUtil;
 import net.travel.util.TemplateUtil;
 import net.travel.util.model.TourDetailData;
@@ -34,16 +37,6 @@ import java.util.List;
 public class HotelController {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserOrderService userOrderService;
-
-    @Autowired
-    private WishListService wishListService;
-
     @Autowired
     private HotelService hotelService;
 
@@ -51,17 +44,15 @@ public class HotelController {
     private NumberUtil numberUtil;
 
     @Autowired
-    private ReviewService reviewService;
+    private AuthenticationUtil authenticationUtil;
+
+    @Autowired
+    private DataUtil dataUtil;
 
     @GetMapping("/hotels")
     public String hotelsTemplate(@AuthenticationPrincipal CurrentUser currentUser,
                                  Model model){
-        boolean isUserExist = userService.isNotNull(currentUser);
-        if(isUserExist){
-            model.addAttribute("currentUser",currentUser.getUser());
-            model.addAttribute("bookingCount",userOrderService.countByUserId(currentUser.getUser().getId()));
-            model.addAttribute("wishListCount",wishListService.countByUserId(currentUser.getUser().getId()));
-        }
+        authenticationUtil.addUserDataInModel(currentUser,model);
         return TemplateUtil.HOTELS;
     }
 
@@ -87,9 +78,9 @@ public class HotelController {
                 .order(order)
                 .userId(-1)
                 .build();
-        boolean isUserExist = userService.isNotNull(currentUser);
-        SearchDto<HotelDto> searchDto = hotelService.getByParams(searchParam, pageable,
-                isUserExist ? currentUser.getUser().getId() : -1);
+        boolean isUserExist = currentUser != null;
+        SearchDto<HotelDto> searchDto = dataUtil.getSearchModel(searchParam,
+                pageable,isUserExist ? currentUser.getUser().getId() : -1,hotelService::getByParams);
         return ResponseEntity
                 .ok(searchDto);
     }
@@ -101,15 +92,10 @@ public class HotelController {
         if (hotelId != -1 && !hotelService.existsById(hotelId)) {
             return "redirect:/";
         }
-        boolean isUserExist = userService.isNotNull(currentUser);
-        if(isUserExist){
-            model.addAttribute("currentUser",currentUser.getUser());
-            model.addAttribute("bookingCount",userOrderService.countByUserId(currentUser.getUser().getId()));
-            model.addAttribute("wishListCount",wishListService.countByUserId(currentUser.getUser().getId()));
-        }
-        TourDetailData<Hotel, HotelImage> hotelDetail = hotelService
-                .getDetailById(hotelId, isUserExist ? currentUser.getUser().getId() : -1);
-        model.addAttribute("tourDetail",hotelDetail);
+        authenticationUtil.addUserDataInModel(currentUser,model);
+        boolean isUserExist = currentUser != null;
+        model.addAttribute("tourDetail",dataUtil.getModelDetailById(isUserExist ? currentUser.getUser().getId() : -1, hotelId,
+                hotelService::getDetailById));
         return TemplateUtil.HOTEL_DETAIL;
     }
 

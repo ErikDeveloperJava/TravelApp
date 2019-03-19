@@ -2,15 +2,17 @@ package net.travel.service.impl;
 
 import net.travel.dto.PlaceDto;
 import net.travel.dto.SearchDto;
-import net.travel.model.*;
+import net.travel.model.Place;
+import net.travel.model.PlaceImage;
+import net.travel.model.Review;
 import net.travel.repository.PlaceImageRepository;
 import net.travel.repository.PlaceRepository;
 import net.travel.repository.ReviewRepository;
 import net.travel.repository.WishListRepository;
 import net.travel.service.PlaceService;
+import net.travel.util.DataUtil;
 import net.travel.util.NumberUtil;
 import net.travel.util.PaginationUtil;
-import net.travel.util.model.RatingPercent;
 import net.travel.util.model.TourData;
 import net.travel.util.model.TourDetailData;
 import net.travel.util.search.SearchParam;
@@ -52,6 +54,9 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Autowired
     private PlaceImageRepository placeImageRepository;
+
+    @Autowired
+    private DataUtil dataUtil;
 
     @Override
     public List<TourData<Place>> getByHighestRating(int userId, Pageable pageable) {
@@ -124,17 +129,8 @@ public class PlaceServiceImpl implements PlaceService {
         int ratingCount = reviewRepository.countByPlaceId(id);
         boolean existsWishList = userId != -1 && wishListRepository
                 .existsByUser_idAndPlace_id(userId, id);
-        List<RatingPercent> ratingPercentList = ReviewServiceImpl
-                .countRatingPercent(id,ratingSum == null ? 0 : ratingSum,numberUtil,reviewRepository::findSumPlaceRatingByRatingNumber);
-        return TourDetailData.<Place,PlaceImage>
-                builder()
-                .model(place)
-                .imageList(placeImageList)
-                .reviewList(reviewList)
-                .rating(numberUtil.countRating(ratingSum, ratingCount))
-                .existsWishList(existsWishList)
-                .ratingPercentList(ratingPercentList)
-                .build();
+        return dataUtil.buildTourDetail(id,ratingSum,reviewRepository::findSumPlaceRatingByRatingNumber,place,
+                placeImageList,reviewList,ratingCount,existsWishList);
     }
 
     @Override

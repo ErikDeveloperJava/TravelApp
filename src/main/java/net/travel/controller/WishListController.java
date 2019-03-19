@@ -3,6 +3,7 @@ package net.travel.controller;
 import net.travel.config.security.CurrentUser;
 import net.travel.dto.*;
 import net.travel.service.*;
+import net.travel.util.AuthenticationUtil;
 import net.travel.util.TemplateUtil;
 import net.travel.util.search.SearchModelType;
 import net.travel.util.search.SearchParam;
@@ -22,11 +23,7 @@ public class WishListController {
     private WishListService wishListService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserOrderService userOrderService;
-
+    private AuthenticationUtil authenticationUtil;
     @Autowired
     private PlaceService placeService;
 
@@ -63,14 +60,11 @@ public class WishListController {
                 .order(order)
                 .userId(currentUser.getUser().getId())
                 .build();
-        boolean isUserExist = userService.isNotNull(currentUser);
         SearchDto searchDto;
         if(searchParam.getModelType() == SearchModelType.PLACE){
-            searchDto = placeService.getByParams(searchParam, pageable,
-                    isUserExist ? currentUser.getUser().getId() : -1);
+            searchDto = placeService.getByParams(searchParam, pageable,currentUser.getUser().getId());
         }else {
-            searchDto = hotelService.getByParams(searchParam, pageable,
-                    isUserExist ? currentUser.getUser().getId() : -1);
+            searchDto = hotelService.getByParams(searchParam, pageable,currentUser.getUser().getId());
         }
         return ResponseEntity
                 .ok(searchDto);
@@ -79,12 +73,7 @@ public class WishListController {
 
     @GetMapping
     public String placesPage(@AuthenticationPrincipal CurrentUser currentUser, Model model){
-        boolean isUserExist = userService.isNotNull(currentUser);
-        if(isUserExist){
-            model.addAttribute("currentUser",currentUser.getUser());
-            model.addAttribute("bookingCount",userOrderService.countByUserId(currentUser.getUser().getId()));
-            model.addAttribute("wishListCount",wishListService.countByUserId(currentUser.getUser().getId()));
-        }
+        authenticationUtil.addUserDataInModel(currentUser,model);
         return TemplateUtil.WISH_LIST;
     }
 }

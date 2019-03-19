@@ -11,6 +11,7 @@ import net.travel.repository.HotelRepository;
 import net.travel.repository.ReviewRepository;
 import net.travel.repository.WishListRepository;
 import net.travel.service.HotelService;
+import net.travel.util.DataUtil;
 import net.travel.util.NumberUtil;
 import net.travel.util.PaginationUtil;
 import net.travel.util.model.RatingPercent;
@@ -56,6 +57,9 @@ public class HotelServiceImpl implements HotelService {
 
     @Autowired
     private HotelImageRepository hotelImageRepository;
+
+    @Autowired
+    private DataUtil dataUtil;
 
     @Override
     public List<TourData<Hotel>> getByHighestRating(int userId, Pageable pageable) {
@@ -117,17 +121,8 @@ public class HotelServiceImpl implements HotelService {
         int ratingCount = reviewRepository.countByHotelId(id);
         boolean existsWishList = userId != -1 && wishListRepository
                 .existsByUser_idAndHotel_id(userId,hotel.getId());
-        List<RatingPercent> ratingPercentList = ReviewServiceImpl
-                .countRatingPercent(id,ratingSum == null ? 0 : ratingSum,numberUtil,reviewRepository::findSumHotelRatingByRatingNumber);
-        return TourDetailData.<Hotel, HotelImage>
-                builder()
-                .model(hotel)
-                .imageList(hotelImageList)
-                .reviewList(reviewList)
-                .rating(numberUtil.countRating(ratingSum,ratingCount))
-                .existsWishList(existsWishList)
-                .ratingPercentList(ratingPercentList)
-                .build();
+        return dataUtil.buildTourDetail(id,ratingSum,reviewRepository::findSumHotelRatingByRatingNumber,hotel,
+                hotelImageList,reviewList,ratingCount,existsWishList);
     }
 
     @Override

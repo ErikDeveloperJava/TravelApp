@@ -6,6 +6,7 @@ import net.travel.model.UserOrder;
 import net.travel.service.UserOrderService;
 import net.travel.service.UserService;
 import net.travel.service.WishListService;
+import net.travel.util.AuthenticationUtil;
 import net.travel.util.ImageUtil;
 import net.travel.util.PaginationUtil;
 import net.travel.util.TemplateUtil;
@@ -35,7 +36,7 @@ public class UserController {
     private UserOrderService userOrderService;
 
     @Autowired
-    private WishListService wishListService;
+    private AuthenticationUtil authenticationUtil;
 
     @Autowired
     private UserService userService;
@@ -49,9 +50,7 @@ public class UserController {
     @GetMapping("/detail")
     public String userDetail(@AuthenticationPrincipal CurrentUser currentUser,
                              Model model) {
-        model.addAttribute("currentUser", currentUser.getUser());
-        model.addAttribute("bookingCount", userOrderService.countByUserId(currentUser.getUser().getId()));
-        model.addAttribute("wishListCount", wishListService.countByUserId(currentUser.getUser().getId()));
+        authenticationUtil.addUserDataInModel(currentUser,model);
         return TemplateUtil.USER_DETAIL;
     }
 
@@ -89,12 +88,7 @@ public class UserController {
         int userOrdersCount = userOrderService.countByUserId(currentUser.getUser().getId());
         int paginationLength = paginationUtil.getPaginationLength(userOrdersCount, pageable.getPageSize());
         pageable = paginationUtil.checkPageableObject(pageable,paginationLength);
-        boolean isUserExist = userService.isNotNull(currentUser);
-        if(isUserExist){
-            model.addAttribute("currentUser",currentUser.getUser());
-            model.addAttribute("bookingCount",userOrderService.countByUserId(currentUser.getUser().getId()));
-            model.addAttribute("wishListCount",wishListService.countByUserId(currentUser.getUser().getId()));
-        }
+        authenticationUtil.addUserDataInModel(currentUser,model);
         model.addAttribute("currentPageNumber",pageable.getPageNumber());
         model.addAttribute("paginationLength",paginationLength);
         List<UserOrder> userOrderList = userService.getUserOrders(currentUser.getUser(), pageable);

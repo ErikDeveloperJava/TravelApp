@@ -11,6 +11,7 @@ import net.travel.model.enums.UserType;
 import net.travel.repository.ReviewRepository;
 import net.travel.service.*;
 import net.travel.service.impl.ReviewServiceImpl;
+import net.travel.util.AuthenticationUtil;
 import net.travel.util.NumberUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +59,9 @@ public class ReviewControllerAddReviewTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private AuthenticationUtil authenticationUtil;
 
     @Before
     public void before() {
