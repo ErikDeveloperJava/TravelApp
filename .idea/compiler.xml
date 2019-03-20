@@ -6,25 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="CommonModule" />
-        <module name="RepositoryModule" />
         <module name="travel-net" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="AdminModule" target="1.8" />
-      <module name="CommonModule" target="1.8" />
-      <module name="RepositoryModule" target="1.8" />
       <module name="travel-net" target="1.8" />
-      <module name="TravelApp" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="AdminModule" options="-parameters" />
-      <module name="CommonModule" options="-parameters" />
-      <module name="RepositoryModule" options="-parameters" />
-      <module name="TravelApp" options="-parameters" />
       <module name="travel-net" options="-parameters" />
     </option>
   </component>
