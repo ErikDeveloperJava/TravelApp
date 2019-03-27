@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anonymous()
                 .antMatchers(HttpMethod.POST,"/register","/forgot_password","/forgot_password/**")
                 .anonymous()
-                .antMatchers("/","/region",
+                .antMatchers("/region",
                         "/city/by/regionId/*","/hotels/search","/hotels",
                         "/places","/places/search","/hotel/detail/*","/hotel/room/id/*",
                         "/hotel/room/detail/*","/place/detail/*")

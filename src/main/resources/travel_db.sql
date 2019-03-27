@@ -128,6 +128,7 @@ create table user_order(
   hotel_id int not null ,
   hotel_room_id int not null ,
   user_id int not null ,
+  send_message boolean,
   foreign key (hotel_id) references hotel(id) on delete cascade ,
   foreign key (hotel_room_id) references hotel_room(id) on delete cascade ,
   foreign key (user_id) references user(id) on delete cascade

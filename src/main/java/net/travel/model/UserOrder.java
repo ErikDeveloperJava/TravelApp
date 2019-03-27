@@ -39,4 +39,6 @@ public class UserOrder {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date orderDate;
+
+    private Boolean sendMessage;
 }
