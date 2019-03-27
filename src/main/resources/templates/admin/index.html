@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Ansonika">
+    <title>Admin page</title>
+
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="/resources/admin_section/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon"
+          href="/resources/admin_section/img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72"
+          href="/resources/img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114"
+          href="/resources/admin_section/img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144"
+          href="/resources/admin_section/img/apple-touch-icon-144x144-precomposed.png">
+
+    <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
+
+    <!-- Bootstrap core CSS-->
+    <link href="/resources/admin_section/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Main styles -->
+    <link href="/resources/admin_section/css/admin.css" rel="stylesheet">
+    <!-- Icon fonts-->
+    <link href="/resources/admin_section/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Plugin styles -->
+    <link href="/resources/admin_section/vendor/animate.min.css" rel="stylesheet">
+    <link href="/resources/admin_section/vendor/magnific-popup.css" rel="stylesheet">
+    <!-- Your custom styles -->
+    <link href="/resources/admin_section/css/custom.css" rel="stylesheet">
+    <script src="/resources/admin_section/vendor/jquery/jquery.min.js"></script>
+    <style>
+        .round {
+            border-radius: 100px; /* Радиус скругления */
+            border: 1px solid white; /* Параметры рамки */
+            box-shadow: 0 0 7px #666; /* Параметры тени */
+            width: 49px;
+            height: 49px;
+        }
+
+        .sendUserMessage {
+            background-color: #dadde0;
+            width: 877px;
+            height: 188px;
+            position: absolute;
+            margin-left: 496px;
+            margin-top: -190px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="fixed-nav sticky-footer" id="page-top">
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-default fixed-top" id="mainNav">
+    <a href="/admin/detail" style="color: #a3de12;;font-size: 20px">
+        <img class="round" th:if="${currentUser.imgUrl} ne null"
+             th:src="@{/resources/{imgUrl}(imgUrl = ${currentUser.imgUrl})}">
+        <img class="round" th:if="${currentUser.imgUrl} eq null"
+             src="/resources/default/user.png">
+        <th:block th:text="${currentUser.name} + ' ' + ${currentUser.surname}">name surname</th:block>
+    </a>
+    <!--<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"-->
+    <!--data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"-->
+    <!--aria-label="Toggle navigation">-->
+    <!--<span class="navbar-toggler-icon"></span>-->
+    <!--</button>-->
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="/admin">
+                    <!--<i class="fa fa-fw fa-dashboard"></i>-->
+                    <span class="nav-link-text" th:text="#{home}">home</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="/admin/city">
+                    <!--<i class="fa fa-fw fa-dashboard"></i>-->
+                    <span class="nav-link-text" th:text="#{city}">city</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="/admin/region">
+                    <!--<i class="fa fa-fw fa-dashboard"></i>-->
+                    <span class="nav-link-text" th:text="#{region}">region</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="/admin/hotel">
+                    <!--<i class="fa fa-fw fa-dashboard"></i>-->
+                    <span class="nav-link-text" th:text="#{hotel}">hotel</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="/admin/place">
+                    <!--<i class="fa fa-fw fa-dashboard"></i>-->
+                    <span class="nav-link-text" th:text="#{place}">place</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="/admin/user">
+                    <!--<i class="fa fa-fw fa-dashboard"></i>-->
+                    <span class="nav-link-text" th:text="#{user}">user</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a th:unless="${#strings.equals(#locale.language,'en')}" class="nav-link"
+                   th:href="@{${#request.getRequestURI()}(lang='en')}">
+                    <img src="/resources/icons/england.png">
+                </a>
+                <a th:if="${#strings.equals(#locale.language,'en')}" class="nav-link"
+                   style="cursor: pointer">
+                    <img src="/resources/icons/england.png">
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:unless="${#strings.equals(#locale.language,'ru')}" class="nav-link"
+                   th:href="@{${#request.getRequestURI()}(lang='ru')}">
+                    <img src="/resources/icons/russia.png">
+                </a>
+                <a th:if="${#strings.equals(#locale.language,'ru')}" class="nav-link"
+                   style="cursor: pointer">
+                    <img src="/resources/icons/russia.png">
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:unless="${#strings.equals(#locale.language,'arm')}" class="nav-link"
+                   th:href="@{${#request.getRequestURI()}(lang='arm')}">
+                    <img src="/resources/icons/armenia.png">
+                </a>
+                <a th:if="${#strings.equals(#locale.language,'arm')}" class="nav-link"
+                   style="cursor: pointer">
+                    <img src="/resources/icons/armenia.png">
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout" data-toggle="modal" data-target="#exampleModal">
+                    <i class="fa fa-fw fa-sign-out"></i>
+                    <th:block th:text="#{logout}">logout</th:block>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!-- /Navigation-->
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <div class="box_general">
+            <div class="header_box">
+                <h2 class="d-inline-block" th:text="#{order}">order</h2>
+            </div>
+            <div class="list_general reviews">
+                <ul>
+                    <li th:each="userOrder : ${userOrderList}">
+                        <span th:text="${#dates.format(userOrder.orderDate,'yyyy.MM.dd HH:mm:ss')}">order date</span>
+                        <figure>
+                            <img th:src="@{${userOrder.hotelRoom.imgUrl ne null} ? ${userOrder.hotelRoom.imgUrl} : '/resources/default/hotel_room.jpg'}"
+                                 alt="">
+                        </figure>
+                        <h4>
+                            <th:block th:text="${userOrder.hotelRoom.name}">hotel room name</th:block>
+                            <small th:text="#{order.by} + ' ' + ${userOrder.user.name} + ' ' + ${userOrder.user.surname}">
+                                user name surname
+                            </small>
+                        </h4>
+
+                        <ul>
+                            <li style="display: flex">
+                                <th:block th:text="#{since.date}">since date</th:block>
+                                <span style="color: #1da1f2"
+                                      th:text="' :  ' + ${#dates.format(userOrder.orderDate,'yyyy.MM.dd')}"></span>
+                            </li>
+                            <li style="display: flex">
+                                <th:block th:text="#{days.count}">days count</th:block>
+                                <span style="color: #1da1f2"
+                                      th:text="' :  ' +${userOrder.howManyDays}">days count</span>
+                            </li>
+                            <li style="display: flex">
+                                <th:block th:text="#{adults}">adults count</th:block>
+                                <span style="color: #1da1f2"
+                                      th:text="' :  ' +${userOrder.adultCount}">adults count</span>
+                            </li>
+                            <li style="display: flex">
+                                <th:block th:text="#{children}">children count</th:block>
+                                <span style="color: #1da1f2"
+                                      th:text="' :  ' +${userOrder.childrenCount}">children count</span>
+                            </li>
+                            <li style="display: flex">
+                                <th:block th:text="#{price}">price</th:block>
+                                <span style="color: #1da1f2"
+                                      th:text="' :  ' +${userOrder.price} + ' $'">price</span>
+                            </li>
+                            <li style="display: flex">
+                                <th:block th:text="#{send.email.message} + ' :  '">Is sent email message?</th:block>
+                                <span>
+                                    <i th:id="'send-message-icon-uncheck-' + ${userOrder.id}" style="color: red" th:if="${#bools.isFalse(userOrder.sendMessage)}"
+                                          class="fa fa-remove"></i>
+                                    <i th:id="'send-message-icon-uncheck-' + ${userOrder.id}" style="color: red;display: none"
+                                       th:if="${#bools.isTrue(userOrder.sendMessage)}" class="fa fa-remove"></i>
+                                     <i th:id="'send-message-icon-check-' + ${userOrder.id}" style="color: green" th:if="${#bools.isTrue(userOrder.sendMessage)}"
+                                        class="fa fa-check"></i>
+                                     <i th:id="'send-message-icon-check-' + ${userOrder.id}" style="color: green;display: none" th:if="${#bools.isFalse(userOrder.sendMessage)}"
+                                        class="fa fa-check"></i>
+                                </span>
+                            </li>
+                        </ul>
+                        <p class="inline-popups">
+                            <a style="cursor: pointer" th:id="${userOrder.id}" data-effect="mfp-zoom-in"
+                               class="btn_1 gray sendMessageButton">
+                                <i class="fa fa-fw fa-reply"></i>
+                                <th:block th:text="#{send.message}">send message</th:block>
+                            </a>
+                        </p>
+                        <div th:id="'send-message-success-' + ${userOrder.id}"
+                             style="display: none;margin-left: 496px;width: 731px;margin-top: -242px;position: absolute;"
+                             class="alert alert-info in alert-success">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                            <th:block th:text="#{email.message.sent.success}">email message sent successfully</th:block>
+                        </div>
+                        <div th:id="'send-message-' + ${userOrder.id}" class="sendUserMessage">
+                            <i class="fa fa-close closeSendMessageDiv" style="margin-left: 863px;cursor: pointer"></i>
+                            <div style="margin-top: -11px;" class="container">
+                                <form class="messageForm" th:id="'messageForm-' + ${userOrder.id}">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control sendMessageInput"
+                                               th:id="'subject-' + ${userOrder.id} " th:placeholder="#{subject}"
+                                               name="subject">
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea class="form-control sendMessageInput" th:placeholder="#{message}"
+                                                  name="message" th:id="'message-' + ${userOrder.id}"></textarea>
+                                    </div>
+                                    <button style="cursor: pointer" type="submit" class="btn btn-success"
+                                            th:text="#{send}"></button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <script>
+            var isCallMethod = false;
+            var isSubmitForm = false;
+            $(document).ready(function () {
+                $(".sendMessageButton").on("click", function () {
+                    if (!isCallMethod) {
+                        isCallMethod = true;
+                        var userOrderId = $(this).attr("id");
+                        setEmptyValues();
+                        $(".sendUserMessage").hide();
+                        $("#send-message-" + userOrderId).show();
+                        isCallMethod = false;
+                    }
+                })
+                $(".closeSendMessageDiv").on("click", function () {
+                    setEmptyValues();
+                    $(this).parent().hide();
+                });
+                $(".messageForm").on("submit", function (event) {
+                    if (!isSubmitForm) {
+                        isSubmitForm = true;
+                        var orderId = $(this).attr("id").split("-")[1];
+                        var subject = $("#subject-" + orderId).val();
+                        var message = $("#message-" + orderId).val();
+                        var correctValuesCount = 0;
+                        if (subject.length < 4) {
+                            $("#subject-" + orderId).attr("style", "border: 1px solid red");
+                        } else {
+                            $("#subject-" + orderId).attr("style", "border: 1px solid #ced4da");
+                            correctValuesCount++;
+                        }
+                        if (message.length < 10) {
+                            $("#message-" + orderId).attr("style", "border: 1px solid red");
+                        } else {
+                            $("#message-" + orderId).attr("style", "border: 1px solid #ced4da");
+                            correctValuesCount++;
+                        }
+                        if (correctValuesCount == 2) {
+                            var sendMessageObject = {
+                                "subject": subject,
+                                "message": message,
+                                "orderId": orderId
+                            };
+                            $.ajax({
+                                type: "POST",
+                                url: "/admin/send-email-message/",
+                                contentType: "application/json",
+                                data: JSON.stringify(sendMessageObject),
+                                success: function (response) {
+                                    var errorList = response.errorList;
+                                    if(response.success){
+                                        setEmptyValues();
+                                        $("#send-message-success-" + orderId).show();
+                                        $("#send-message-icon-check-" + orderId).show();
+                                        $("#send-message-icon-uncheck-" + orderId).hide();
+                                    }else {
+                                        $.each(errorList,function (i, errorField) {
+                                            if(errorField != "orderId"){
+                                                $("#" + errorField + "-" + orderId).attr("style", "border: 1px solid red");
+                                            }
+                                        })
+                                    }
+                                    isSubmitForm = false;
+                                },
+                                error: function () {
+                                    window.location = "/500";
+                                }
+                            })
+                        }
+                    }
+                    event.preventDefault();
+                })
+
+                function setEmptyValues() {
+                    $(".sendMessageInput").val("");
+                    $(".alert-success").hide();
+                    $(".sendMessageInput").attr("style", "border: 1px solid #ced4da");
+                }
+            })
+        </script>
+        <!-- /box_general-->
+        <nav aria-label="...">
+            <ul class="pagination pagination-sm add_bottom_30">
+                <li th:class="'page-item ' + (${currentPageNumber} eq 0 ? 'disabled' + '')">
+                    <a class="page-link" th:href="@{${#request.getRequestURI()}(page=${currentPageNumber-1})}"
+                       tabindex="-1" th:text="#{previous}">Previous</a>
+                </li>
+                <li class="page-item" th:if="${currentPageNumber - 2} > 0">
+                    <a class="page-link" th:href="@{${#request.getRequestURI()}(page=0)}">1</a>
+                </li>
+                <li class="page-item disabled" th:if="${currentPageNumber - 2} > 0">
+                    <a class="page-link">...</a>
+                </li>
+                <li class="page-item" th:if="${currentPageNumber - 2} > -1">
+                    <a class="page-link" th:href="@{${#request.getRequestURI()}(page=${currentPageNumber -2})}"
+                       th:text="${currentPageNumber -1}">1</a>
+                </li>
+                <li class="page-item" th:if="${currentPageNumber - 1} > -1">
+                    <a class="page-link" th:href="@{${#request.getRequestURI()}(page=${currentPageNumber -1})}"
+                       th:text="${currentPageNumber}">1</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" style="cursor: pointer"
+                       th:text="${currentPageNumber +1}">current page number</a>
+                </li>
+                <li class="page-item" th:if="${currentPageNumber + 1} < ${paginationLength}">
+                    <a class="page-link" th:href="@{${#request.getRequestURI()}(page=${currentPageNumber +1})}"
+                       th:text="${currentPageNumber + 2}">1</a>
+                </li>
+                <li class="page-item" th:if="${currentPageNumber + 2} < ${paginationLength}">
+                    <a class="page-link" th:href="@{${#request.getRequestURI()}(page=${currentPageNumber +2})}"
+                       th:text="${currentPageNumber + 3}">1</a>
+                </li>
+                <li class="page-item disabled" th:if="${currentPageNumber + 2} < ${paginationLength -1}">
+                    <a class="page-link">...</a>
+                </li>
+                <li class="page-item" th:if="${currentPageNumber + 2} < ${paginationLength -1}">
+                    <a class="page-link" th:href="@{${#request.getRequestURI()}(page=${paginationLength -1})}"
+                       th:text="${paginationLength}">las page</a>
+                </li>
+                <li th:class="'page-item ' + (${currentPageNumber + 1} < ${paginationLength} ? '' : 'disabled')">
+                    <a class="page-link" th:href="@{${#request.getRequestURI()}(page=${currentPageNumber + 1})}"
+                       th:text="#{next}">Next</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /pagination-->
+    </div>
+    <!-- /container-fluid-->
+</div>
+<!-- /container-wrapper-->
+<footer class="sticky-footer">
+    <div class="container">
+        <div class="text-center">
+            <small>Copyright © PANAGEA 2018</small>
+        </div>
+    </div>
+</footer>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="reviews.html#page-top">
+    <i class="fa fa-angle-up"></i>
+</a>
+
+<!-- Reply to review popup -->
+<div id="modal-reply" class="white-popup mfp-with-anim mfp-hide">
+    <div class="small-dialog-header">
+        <h3>Reply to review</h3>
+    </div>
+    <div class="message-reply margin-top-0">
+        <div class="form-group">
+            <textarea cols="40" rows="3" class="form-control"></textarea>
+        </div>
+        <button class="btn_1">Reply</button>
+    </div>
+</div>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel" th:text="#{ready.leave} + ' ?'">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" th:text="#{logout.text}">
+                logout text
+            </div>
+            <div class="modal-footer">
+                <button style="cursor: pointer" class="btn btn-secondary" type="button" data-dismiss="modal"
+                        th:text="#{cancel}">
+                    cancel
+                </button>
+                <a class="btn btn-primary" href="/logout" th:text="#{logout}">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script>
+    $(document).ready(function () {
+        $(".sendMessageButton").on("click", function () {
+            var userId = $(this).attr("id");
+        })
+    })
+</script>
+<script src="/resources/admin_section/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Core plugin JavaScript-->
+<script src="/resources/admin_section/vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Page level plugin JavaScript-->
+<script src="/resources/admin_section/vendor/chart.js/Chart.min.js"></script>
+<script src="/resources/admin_section/vendor/datatables/jquery.dataTables.js"></script>
+<script src="/resources/admin_section/vendor/datatables/dataTables.bootstrap4.js"></script>
+<script src="/resources/admin_section/vendor/jquery.selectbox-0.2.js"></script>
+<script src="/resources/admin_section/vendor/retina-replace.min.js"></script>
+<script src="/resources/admin_section/vendor/jquery.magnific-popup.min.js"></script>
+<!-- Custom scripts for all pages-->
+<script src="/resources/admin_section/js/admin.js"></script>
+
+</body>
+</html>

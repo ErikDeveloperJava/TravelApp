@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -25,5 +27,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public int orderCountByUserId(int userId) {
         return orderRepository.countByUser_id(userId);
+    }
+
+    @Override
+    public Optional<UserOrder> getById(int id) {
+        return orderRepository.findById(id);
+    }
+
+    @Override
+    public void update(UserOrder userOrder) {
+        orderRepository.save(userOrder);
     }
 }
